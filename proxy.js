@@ -2,28 +2,7 @@
  * 
  */
 
-var config=require('./server.json');
-
-
-(function(){
-	
-	//Simple webserver
-
-	var fs=require('fs');
-	var http=require('http');
-
-	var port=config.serverPort;
-
-
-	var server=http.createServer().on('connect',function(request, socket, head){
-	
-		
-	
-	}).listen(port);
-	console.log('webserver listening on: '+port);
-
-});
-
+var config=require('./proxy.json');
 
 (function(){
 
@@ -32,26 +11,35 @@ var config=require('./server.json');
 	var port = config.websocketPort;
 
 
+	var master=null;
+	
+	
 	(new (require('ws').Server)({
 		port: port
 	})).on('connection', function(wsclient){
 	
+		if(master===null){
+			console.log('master client connected: '+wsclient);
+			
+		}
 
-		console.log('client connected: '+wsclient);
+		
 
 		wsclient.on('message',function(data){
 
 			console.log(data);
 			
+		}).on('error', function(error){
+			console.log('error: '+error);
 		}).on('close',function(code, message){
-
+			console.log('close: '+message);
 		});
+		
+		
 
 	}).on('error', function(error){
-		
 		console.log('error: '+error);
-	
-	});
+	})
 		
 	console.log('websocket listening on: '+port);
 
