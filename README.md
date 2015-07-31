@@ -20,9 +20,7 @@ Anyway the rpi serves the app, and using node-rproxy it is intended to be able t
  
 ##rproxy setup
 
-rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides continues to provide connections to the public server that can 
-be used by the public server to connect to real clients. autoconnectproxy.js assumes that the client initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. 
-
+rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides connections to the public wesocket proxy (slaveproxy.js) that connects to real clients. autoconnectproxy.js assumes that the client (real client) initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. slaveproxy.js is a websocket server that must distinguish between connections from autoconnectproxy.js and real clients and for each real client, it must have a autoconnectproxy connection to pair.
 
 slaveproxy.js is run like this: 
 ```
