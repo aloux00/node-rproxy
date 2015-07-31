@@ -18,7 +18,7 @@ var config=require('./proxy.json');
 		port: port
 	})).on('headers',function(headers){
 		if(master===null){
-			console.log('master client connected: '+JSON.stringify(Object.keys(headers)));
+			console.log('master client connected: '+JSON.stringify(headers));
 			
 		}
 		
