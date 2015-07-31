@@ -9,7 +9,9 @@ var config=require('./slaveproxy.json');
 	// Simple websocket server
 	
 	var port = config.websocketPort;
-
+	if(process.argc==3){
+		port=parseInt(process.argv[2]);
+	}
 
 	var master=null;
 	
