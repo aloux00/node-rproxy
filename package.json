@@ -1,0 +1,26 @@
+{
+  "name": "node-rproxy",
+  "version": "0.0.0",
+  "description": "a kind of reverse proxy webserver",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickolanack/node-rproxy.git"
+  },
+  "keywords": [
+    "webserver",
+    "proxy",
+    "reverse proxy"
+  ],
+  "author": "Nick Blackwell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nickolanack/node-rproxy/issues"
+  },
+  "dependencies":{
+    "ws":"latest"
+  }
+}
