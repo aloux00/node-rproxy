@@ -15,15 +15,14 @@ var config=require('./server.json');
 	var port=config.serverPort;
 
 
-	var server=http.createServer(function(req, res) {
-
-		
-	});
+	var server=http.createServer().on('connect',function(request, socket, head){
 	
-	server.listen(port);
+		
+	
+	}).listen(port);
 	console.log('webserver listening on: '+port);
 
-})();
+});
 
 
 (function(){
@@ -31,17 +30,19 @@ var config=require('./server.json');
 	// Simple websocket server
 	
 	var port = config.websocketPort;
-	var clients = [];
+
 
 	(new (require('ws').Server)({
 		port: port
 	})).on('connection', function(wsclient){
 	
-		clients.push(wsclient);
+
 		console.log('client connected: '+wsclient);
 
 		wsclient.on('message',function(data){
 
+			console.log(data);
+			
 		}).on('close',function(code, message){
 
 		});
