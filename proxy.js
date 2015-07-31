@@ -29,10 +29,10 @@ var config=require('./proxy.json');
 			master=null;
 			var b=wsclient;
 			console.log('connected a client');
-			var b=this;
+	
 			a.on('message', function message(data, flags) {
-				b.send(data);
 				console.log('master sent '+data);
+				b.send(data);
 			}).on('error',function(error){
 				console.log('a error: '+error)
 			}).on('close',function(code, message){
@@ -43,8 +43,9 @@ var config=require('./proxy.json');
 				}
 			});
 			b.on('message', function message(data, flags) {
-				a.send(data);
 				console.log('client sent '+data);
+				a.send(data);
+				
 			}).on('error',function(error){
 				console.log('b error: '+error)
 			}).on('close',function(code, message){
