@@ -19,7 +19,7 @@ var config=require('./proxy.json');
 	})).on('connection', function(wsclient){
 	
 		if(master===null){
-			console.log('master client connected: '+wsclient);
+			console.log('master client connected: '+JSON.stringify(Object.keys(wsclient)));
 			
 		}
 
