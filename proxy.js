@@ -20,7 +20,7 @@ var config=require('./proxy.json');
 	
 		
 		
-		if(master=null){
+		if(master===null){
 			master=wsclient;
 		}else{
 		
