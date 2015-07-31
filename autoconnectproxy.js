@@ -18,8 +18,10 @@ if(process.argv[3].indexOf('ws:')!==0){
 
 
 
-
-var run=function(){
+/**
+ * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
+ */
+var primeNextSocket=function(){
 	(new WebSocket(process.argv[2])).on('open',function(){
 		
 		console.log('connected proxy');
@@ -56,8 +58,10 @@ var run=function(){
 				
 			});
 		});
+		
+		primeNextSocket(); 
 	
 	});
 };
 
-run();
+primeNextSocket();
