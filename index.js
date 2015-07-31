@@ -11,9 +11,9 @@ var config=require('./server.json');
 
 	var fs=require('fs');
 	var http=require('http');
-	var async=require('async');
+
 	var port=config.serverPort;
-	var documentRoot='./html/';
+
 
 	var server=http.createServer(function(req, res) {
 
