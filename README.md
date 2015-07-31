@@ -24,14 +24,12 @@ rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides conti
 be used by the public server to connect to real clients. autoconnectproxy.js assumes that the client initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. 
 
 autoconnectproxy.js is run like this: 
-`
+```
  # start real websocket app to listen on port 8080:
  # node rpi-webapp 8080
  
  # start rproxy autoconnectproxy.js
  node autoconnectproxy.js ws://my.public.websocket:8080 ws://localhost:8080
- 
- 
-`
+```
 
 
