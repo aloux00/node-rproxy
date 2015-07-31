@@ -29,7 +29,6 @@ var config=require('./proxy.json');
 			b=wsclient;
 			
 			var b=this;
-			b.send(data);
 			a.on('message', function message(data, flags) {
 				b.send(data);
 			}).on('error',function(error){
