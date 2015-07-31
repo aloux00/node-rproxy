@@ -18,8 +18,8 @@ var config=require('./proxy.json');
 		port: port
 	})).on('headers',function(headers){
 		if(master===null){
-			console.log('master client connected: '+JSON.stringify(headers));
-			
+			console.log('master client connected');
+			console.log(require('util').inspect(obj, true, 10))
 		}
 		
 	}).on('connection', function(wsclient){
