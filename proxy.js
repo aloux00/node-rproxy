@@ -25,9 +25,9 @@ var config=require('./proxy.json');
 			console.log('connected a master');
 		}else{
 		
-			a=master;
+			var a=master;
 			master=null;
-			b=wsclient;
+			var b=wsclient;
 			console.log('connected a client');
 			var b=this;
 			a.on('message', function message(data, flags) {
