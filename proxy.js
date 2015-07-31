@@ -19,19 +19,43 @@ var config=require('./proxy.json');
 	})).on('connection', function(wsclient){
 	
 		
-		console.log(require('util').inspect(wsclient, true, 10));
-	
 		
-
-		wsclient.on('message',function(data){
-
-			console.log(data);
+		if(master=null){
+			master=wsclient;
+		}else{
+		
+			a=master;
+			master=null;
+			b=wsclient;
 			
-		}).on('error', function(error){
-			console.log('error: '+error);
-		}).on('close',function(code, message){
-			console.log('close: '+message);
-		});
+			var b=this;
+			b.send(data);
+			a.on('message', function message(data, flags) {
+				b.send(data);
+			}).on('error',function(error){
+				console.log('a error: '+error)
+			}).on('close',function(code, message){
+				console.log('a close: '+code+' '+message);
+				a=null;
+				if(b){
+					b.close();
+				}
+			});
+			b.on('message', function message(data, flags) {
+				a.send(data);
+			}).on('error',function(error){
+				console.log('b error: '+error)
+			}).on('close',function(code, message){
+				console.log('b close: '+code+' '+message);
+				b=null;
+				if(a){
+					a.close();
+				}
+				
+			});
+		
+		}
+		
 		
 		
 
