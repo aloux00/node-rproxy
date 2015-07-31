@@ -16,7 +16,10 @@ if(process.argv[3].indexOf('ws:')!==0){
 
 
 var run=function(){
-	(new WebSocket(process.argv[2])).once('message', function message(data, flags) {
+	(new WebSocket(process.argv[2])).on('open',function(){
+		var a=this;
+		a.send('proxy');
+	}).once('message', function message(data, flags) {
 		
 		var a=this;
 		
