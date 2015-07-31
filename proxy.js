@@ -16,12 +16,15 @@ var config=require('./proxy.json');
 	
 	(new (require('ws').Server)({
 		port: port
-	})).on('connection', function(wsclient){
-	
+	})).on('headers',function(headers){
 		if(master===null){
-			console.log('master client connected: '+JSON.stringify(Object.keys(wsclient)));
+			console.log('master client connected: '+JSON.stringify(Object.keys(headers)));
 			
 		}
+		
+	}).on('connection', function(wsclient){
+	
+		
 
 		
 
