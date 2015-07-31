@@ -1,4 +1,8 @@
 /**
+ * A self connecting Websocket client-client proxy. 
+ * 
+ * expects two arguments like: ws://source.socket.com:port/path ws://dest.socket.com:port/path 
+ * where the source is a kind of websocket slave proxy (slaveproxy.js) 
  * 
  */
 

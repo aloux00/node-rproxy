@@ -2,7 +2,7 @@
  * 
  */
 
-var config=require('./proxy.json');
+var config=require('./slaveproxy.json');
 
 (function(){
 
