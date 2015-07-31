@@ -22,15 +22,17 @@ var config=require('./proxy.json');
 		
 		if(master===null){
 			master=wsclient;
+			console.log('connected a master');
 		}else{
 		
 			a=master;
 			master=null;
 			b=wsclient;
-			
+			console.log('connected a client');
 			var b=this;
 			a.on('message', function message(data, flags) {
 				b.send(data);
+				console.log('master sent '+data);
 			}).on('error',function(error){
 				console.log('a error: '+error)
 			}).on('close',function(code, message){
@@ -42,6 +44,7 @@ var config=require('./proxy.json');
 			});
 			b.on('message', function message(data, flags) {
 				a.send(data);
+				console.log('client sent '+data);
 			}).on('error',function(error){
 				console.log('b error: '+error)
 			}).on('close',function(code, message){
