@@ -12,7 +12,7 @@ function WSAutoconnectProxy(config){
 
 	var me=this;
 
-	for(var i=0;i<10){
+	for(var i=0;i<10;i++){
 		me._primeSourceConnection(config);
 	}
 
