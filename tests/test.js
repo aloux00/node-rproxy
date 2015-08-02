@@ -26,14 +26,15 @@ var bridge=new WSBridge({port:9002});
 var WSAuto=require('../autoconnectproxy.js');
 var autoconnect=new WSAuto({source:'ws://localhost:9002', destination:'ws://localhost:9001'});
 
-
-var client=(new ws('ws://localhost:9002')).on('open', function(){
-	
-	this.on('message',function(message){
+for(var i=0;i< 250; i++){
+	var client=(new ws('ws://localhost:9002')).on('open', function(){
 		
-		assert.equal(message,'hello world');
+		this.on('message',function(message){
+			
+			assert.equal(message,'hello world');
+			this.close();
+		});
+		this.send('hello world');
 		
 	});
-	this.send('hello world');
-	
-});
+}
