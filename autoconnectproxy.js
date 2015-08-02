@@ -65,8 +65,8 @@ if(process.argv){
 	console.log(process.argv);
 	
 	var fs=require('fs');
-	fs.realpath(process.argv[1],function(p1){
-		fs.realpath(__filename,function(p2){
+	fs.realpath(process.argv[1],function(err, p1){
+		fs.realpath(__filename,function(err, p2){
 
 			console.log(p1+' '+p2);
 			
