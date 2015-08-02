@@ -37,7 +37,7 @@ var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:9002', destinati
 
 var clients=0;
 
-/*
+
 for(var i=0;i< 250; i++){
 	
 	clients++;
@@ -67,4 +67,3 @@ for(var i=0;i< 250; i++){
 	})(i);
 	
 }
-*/
