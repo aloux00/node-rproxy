@@ -18,23 +18,38 @@ var echo=(new ws.Server({
 	
 });
 
-
-
 // a bridge server.
 var WSBridge=require('../bridgeproxy.js');
 var bridge=new WSBridge({port:9002});
 var WSAuto=require('../autoconnectproxy.js');
 var autoconnect=new WSAuto({source:'ws://localhost:9002', destination:'ws://localhost:9001'});
 
+var clients=0;
+
 for(var i=0;i< 250; i++){
-	var client=(new ws('ws://localhost:9002')).on('open', function(){
-		
-		this.on('message',function(message){
+	
+	clients++;
+	(function(i){
+		var client=(new ws('ws://localhost:9002')).on('open', function(){
+			var tm=setTimeout(function(){}, assert.fail('#'+i+' expected response by now.'))
+			this.on('message',function(message){
+				
+				assert.equal(message, 'hello world');
+				clearTimeout(tm);
+				this.close();
+				clients--;
+				if(clients==0){
+					
+					echo.close();
+					autoconnect.close();
+					bridge.close();
+					
+				}
+			});
 			
-			assert.equal(message,'hello world');
-			this.close();
+			this.send('hello world');
+			
 		});
-		this.send('hello world');
-		
-	});
+	})(i);
+	
 }
