@@ -12,7 +12,7 @@ function WSAutoconnectProxy(config){
 	
 	var me=this;
 	
-	me.__primeSourceConnection(config);
+	me._primeSourceConnection(config);
 	
 	
 };
@@ -74,7 +74,7 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		});
 		
 
-		me.__primeSourceConnection(config);
+		me._primeSourceConnection(config);
 
 	});
 	
