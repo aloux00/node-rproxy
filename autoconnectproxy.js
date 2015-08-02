@@ -1,7 +1,7 @@
 /**
  * A self connecting Websocket client-client proxy. 
  * 
- * expects two arguments like: ws://source.socket.com:port/path ws://dest.socket.com:port/path 
+ * expects two arguments like: ws://user:pass@source.socket.com:port/path ws://dest.socket.com:port/path 
  * where the source is a kind of websocket slave proxy (slaveproxy.js) 
  * 
  */
@@ -9,6 +9,20 @@
 
 
 function WSAutoconnectProxy(config){
+	
+	var me=this;
+	
+	me.__primeSourceConnection(config);
+	
+	
+};
+
+WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
+	var me=this;
+	if(!me._sourceConnections){
+		me._sourceConnections=[];
+		me._destConnections=[];
+	}
 
 	var WSocket = require('ws');
 
@@ -16,49 +30,56 @@ function WSAutoconnectProxy(config){
 	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
 	 */
 
-	(new WSocket(config.source)).on('open',function(){
-
+	var source=(new WSocket(config.source)).on('open',function(){
+		me._sourceConnections.push(source);
 		console.log('connected proxy');
 
 	}).once('message', function message(data, flags) {
 
-		var a=this;
 
-		(new WSocket(config.destination)).on('open', function() {
 
-			var b=this;
-			b.send(data);
-			a.on('message', function message(data, flags) {
-				b.send(data);
+		var dest=(new WSocket(config.destination)).on('open', function() {
+			me._destConnections.push(dest);
+			
+			dest.send(data);
+			
+			
+			
+			source.on('message', function message(data, flags) {
+				dest.send(data);
 			}).on('error',function(error){
 				console.log('a error: '+error)
 			}).on('close',function(code, message){
 				console.log('a close: '+code+' '+message);
-				a=null;
-				if(b){
-					b.close();
+				source=null;
+				if(dest){
+					dest.close();
 				}
 			});
 			
-			b.on('message', function message(data, flags) {
-				a.send(data);
+			dest.on('message', function message(data, flags) {
+				source.send(data);
 			}).on('error',function(error){
 				console.log('b error: '+error)
 			}).on('close',function(code, message){
 				console.log('b close: '+code+' '+message);
-				b=null;
-				if(a){
-					a.close();
+				
+				dest=null;
+				if(source){
+					source.close();
 				}
 
 			});
 			
 		});
+		
 
-		new WSAutoconnectProxy(config); 
+		me.__primeSourceConnection(config);
 
 	});
-};
+	
+}
+
 
 module.exports=WSAutoconnectProxy;
 
