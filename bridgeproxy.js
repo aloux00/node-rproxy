@@ -19,7 +19,7 @@ function WSBridgeProxy(config){
 		console.log(JSON.stringify(h));
 	}).on('connection', function(wsclient){
 
-		console.log(wsclient);
+		//console.log(wsclient);
 
 		if(master===null){
 			master=wsclient;
