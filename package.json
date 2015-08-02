@@ -21,6 +21,7 @@
     "url": "https://github.com/nickolanack/node-rproxy/issues"
   },
   "dependencies":{
-    "ws":"latest"
+    "ws":"latest",
+    "btoa":"latest"
   }
 }

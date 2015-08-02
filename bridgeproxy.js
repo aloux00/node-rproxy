@@ -12,6 +12,8 @@ function WSBridgeProxy(config){
 	var port = config.port;
 	var serverconnections=[];
 	var clientconnections=[];
+	
+	var btoa=require('btoa');
 
 	(new (require('ws').Server)({
 		port: port
