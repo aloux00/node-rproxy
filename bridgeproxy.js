@@ -19,7 +19,7 @@ function WSBridgeProxy(config){
 		//console.log(h);
 	}).on('connection', function(wsclient){
 
-		console.log(wsclient.upgradeReq.headers);
+		console.log(wsclient.upgradeReq.headers.authorization);
 
 		if(master===null){
 			master=wsclient;
