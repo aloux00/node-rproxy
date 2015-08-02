@@ -21,10 +21,11 @@ function WSBridgeProxy(config){
 
 		if((typeof wsclient.upgradeReq.headers.authorization)!='undefined'){
 			console.log(wsclient.upgradeReq)
-			if(btoa(wsclient.upgradeReq.headers.authorization.split(' ')[1])===config.basicauth){
+			var basicauth=btoa(wsclient.upgradeReq.headers.authorization.split(' ')[1];
+			if(basicauth===config.basicauth){
 				serverconnections.push(wsclient)
 			}else{
-				ws.close(3000, 'Basic auth attempt invalid');
+				wsclient.close(3000, 'Basic auth attempt invalid: '+basicauth+' | '+config.basicauth);
 			}
 		}else{
 			clientconnections;
