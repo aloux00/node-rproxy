@@ -19,7 +19,7 @@ var echo=(new ws.Server({
 });
 
 var basicauth='';
-basicauth='nickolanack:nick@';
+basicauth='nickolanack:nick';
 
 
 // a bridge server. pairs clients with autoconnect proxy connections.
@@ -30,6 +30,9 @@ var bridge=new WSBridge({
 	});
 var WSAuto=require('../autoconnectproxy.js');
 
+if(basicauth.length){
+	basicauth=basicauth+'@';
+}
 var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:9002', destination:'ws://localhost:9001'});
 
 var clients=0;
