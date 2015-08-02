@@ -16,7 +16,7 @@ function WSBridgeProxy(config){
 	(new (require('ws').Server)({
 		port: port,
 		verifyClient:function(info){
-			console.log(JSON.stringify(info));
+			console.log(info);
 			return true;
 		}
 	})).on('headers',function(h){
