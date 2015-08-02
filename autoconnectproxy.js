@@ -11,7 +11,7 @@
 function WSAutoconnectProxy(config){
 
 	var me=this;
-
+	me._primedConnections=[];
 	for(var i=0;i<10;i++){
 		me._primeSourceConnection(config);
 	}
@@ -21,10 +21,10 @@ function WSAutoconnectProxy(config){
 
 WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var me=this;
-//	if(!me._sourceConnections){
-//	me._sourceConnections=[];
-//	me._destConnections=[];
-//	}
+	if(!me._primedConnections){
+		me._primedConnections=[];
+
+	}
 
 	var WSocket = require('ws');
 
