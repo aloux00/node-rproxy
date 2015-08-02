@@ -39,7 +39,7 @@ var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:9002', destinati
 var clients=0;
 
 
-for(var i=0;i< 3; i++){
+for(var i=0;i< 50; i++){
 	
 	clients++;
 	(function(i){
@@ -63,7 +63,7 @@ for(var i=0;i< 3; i++){
 				}
 			});
 			console.log('test client #'+i+' sends: hello world');
-			this.send('hello world');
+			client.send('hello world');
 			
 		});
 	})(i);
