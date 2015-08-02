@@ -31,7 +31,9 @@ for(var i=0;i< 250; i++){
 	clients++;
 	(function(i){
 		var client=(new ws('ws://localhost:9002')).on('open', function(){
-			var tm=setTimeout(function(){}, assert.fail('#'+i+' expected response by now.'))
+			var tm=setTimeout(function(){
+				assert.fail('#'+i+' expected response by now.');
+			}, 250);
 			this.on('message',function(message){
 				
 				assert.equal(message, 'hello world');
