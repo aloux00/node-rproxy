@@ -5,10 +5,10 @@
 var assert=require('assert');
 assert.equal(true, true);
 
-
+var ws=require('ws');
 
 // a ws server that just echos back all messages...
-var echo=(new (require('ws').Server)({
+var echo=(new ws.Server({
 	port: 9001
 })).on('connection', function(wsclient){
 	
@@ -26,7 +26,7 @@ var bridge=(new (require('../WSBridgeProxy.js').WSBridgeProxy)({port:9002}));
 var autoconnect=(new (require('../WSAutoconnectProxy.js').WSAutoconnectProxy)({source:'ws://localhost:9002', destination:'ws://localhost:9001'}));
 
 
-var client=(new (require('ws')('ws://localhost:9002')).on('open', function() {
+var client=(new ws('ws://localhost:9002')).on('open', function(){
 	
 	this.on('message',function(message){
 		
