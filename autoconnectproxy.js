@@ -60,30 +60,32 @@ function WSAutoconnectProxy(config){
 
 module.exports=WSAutoconnectProxy;
 
-var fs=require('fs');
-fs.realpath(argv[1],function(p1){
-	fs.realpath(__filename,function(p2){
+if(argv){
+	var fs=require('fs');
+	fs.realpath(argv[1],function(p1){
+		fs.realpath(__filename,function(p2){
 
-		if(p1===p2){
+			if(p1===p2){
 
 
-			if(process.argc!=4){
-				throw new Error('Requires websocket source and destination address arguments: ie: www.host.com:port/path');
+				if(process.argc!=4){
+					throw new Error('Requires websocket source and destination address arguments: ie: www.host.com:port/path');
+				}
+
+				if(process.argv[2].indexOf('ws:')!==0){
+					throw new Error('Requires websocket source address argument: ie: www.host.com:port/path');
+				}
+
+				if(process.argv[3].indexOf('ws:')!==0){
+					throw new Error('Requires websocket destination address argument: ie: www.host.com:port/path');
+				}
+
+
+				new WSAutoconnectProxy({source:process.argv[2], destination:process.argv[3]});
+
+
 			}
 
-			if(process.argv[2].indexOf('ws:')!==0){
-				throw new Error('Requires websocket source address argument: ie: www.host.com:port/path');
-			}
-
-			if(process.argv[3].indexOf('ws:')!==0){
-				throw new Error('Requires websocket destination address argument: ie: www.host.com:port/path');
-			}
-
-
-			new WSAutoconnectProxy({source:process.argv[2], destination:process.argv[3]});
-
-
-		}
-
+		});
 	});
-});
+}
