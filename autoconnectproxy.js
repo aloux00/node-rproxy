@@ -16,7 +16,7 @@ function WSAutoconnectProxy(config){
 	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
 	 */
 
-	(new WSocket(config.source)).on('open',function(){
+	(new WSocket(config.source),{passphrase:'helloworld'}).on('open',function(){
 
 		console.log('connected proxy');
 
@@ -39,6 +39,7 @@ function WSAutoconnectProxy(config){
 					b.close();
 				}
 			});
+			
 			b.on('message', function message(data, flags) {
 				a.send(data);
 			}).on('error',function(error){
@@ -51,6 +52,7 @@ function WSAutoconnectProxy(config){
 				}
 
 			});
+			
 		});
 
 		new WSAutoconnectProxy(config); 

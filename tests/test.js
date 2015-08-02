@@ -18,7 +18,7 @@ var echo=(new ws.Server({
 	
 });
 
-// a bridge server.
+// a bridge server. pairs clients with autoconnect proxy connections.
 var WSBridge=require('../bridgeproxy.js');
 var bridge=new WSBridge({port:9002});
 var WSAuto=require('../autoconnectproxy.js');
