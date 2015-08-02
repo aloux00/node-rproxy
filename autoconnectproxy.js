@@ -16,7 +16,7 @@ function WSAutoconnectProxy(config){
 	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
 	 */
 
-	(new WSocket(config.source),{passphrase:'helloworld'}).on('open',function(){
+	(new WSocket(config.source,{passphrase:'helloworld'})).on('open',function(){
 
 		console.log('connected proxy');
 
