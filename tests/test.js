@@ -23,7 +23,7 @@ var WSBridge=require('../bridgeproxy.js');
 var bridge=new WSBridge({port:9002});
 var WSAuto=require('../autoconnectproxy.js');
 var basicauth='';
-basicauth='nickolanack:nick@';
+//basicauth='nickolanack:nick@';
 
 var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:9002', destination:'ws://localhost:9001'});
 
