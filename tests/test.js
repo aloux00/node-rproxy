@@ -14,6 +14,7 @@ var echo=(new ws.Server({
 	
 	wsclient.on('message',function(message){
 		wsclient.send(message);
+		console.log('endpoint echos: '+message);
 	})
 	
 });
@@ -45,7 +46,7 @@ for(var i=0;i< 250; i++){
 		var client=(new ws('ws://localhost:9002')).on('open', function(){
 			var tm=setTimeout(function(){
 				assert.fail('#'+i+' expected response by now.');
-			}, 250);
+			}, 1000);
 			this.on('message',function(message){
 				
 				assert.equal(message, 'hello world');

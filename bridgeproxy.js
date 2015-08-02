@@ -14,6 +14,8 @@ function WSBridgeProxy(config){
 	var clientconnections=[];
 	
 	var atob=require('atob');
+	
+
 
 	(new (require('ws').Server)({
 		port: port
