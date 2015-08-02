@@ -25,15 +25,19 @@ function WSBridgeProxy(config){
 			var basicauth=atob(b64auth);
 			if(basicauth===config.basicauth){
 				serverconnections.push(wsclient)
+				console.log('added server socket');
 			}else{
 				console.log('Basic auth attempt invalid: '+b64auth+' = ' +basicauth+' | '+config.basicauth)
 				wsclient.close(3000,'Basic auth attempt invalid');
 			}
 		}else{
 			clientconnections.push(wsclient);
+			console.log('added client socket');
 		}
 		
 		while(serverconnections.length&&clientconnections.length){
+			
+			console.log('paired sockets');
 			
 			var a=serverconnections.shift();
 			var b=clientconnections.shift();
