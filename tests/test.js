@@ -26,6 +26,7 @@ var autoconnect=new WSAuto({source:'ws://localhost:9002', destination:'ws://loca
 
 var clients=0;
 
+/*
 for(var i=0;i< 250; i++){
 	
 	clients++;
@@ -55,3 +56,4 @@ for(var i=0;i< 250; i++){
 	})(i);
 	
 }
+*/
