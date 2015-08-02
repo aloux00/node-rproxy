@@ -9,13 +9,13 @@
 
 
 function WSAutoconnectProxy(config){
-	
+
 	var WSocket = require('ws');
 
 	/**
 	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
 	 */
-	
+
 	(new WSocket(config.source)).on('open',function(){
 
 		console.log('connected proxy');
@@ -61,7 +61,7 @@ function WSAutoconnectProxy(config){
 module.exports=WSAutoconnectProxy;
 
 var fs=require('fs');
-if(fs.realpath(argv[1],function(p1){
+fs.realpath(argv[1],function(p1){
 	fs.realpath(__filename,function(p2){
 
 		if(p1===p2){

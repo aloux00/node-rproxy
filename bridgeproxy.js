@@ -82,7 +82,7 @@ module.exports=WSBridgeProxy;
 //console.log(argv);
 
 var fs=require('fs');
-if(fs.realpath(argv[1],function(p1){
+fs.realpath(argv[1],function(p1){
 	fs.realpath(__filename,function(p2){
 		
 		if(p1===p2){
