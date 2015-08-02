@@ -80,7 +80,7 @@ if(fs.realpath(argv[1],function(p1){
 			}
 
 
-			new WSAutoconnectProxy({source:process.argv[2], destination:process.argv[3],});
+			new WSAutoconnectProxy({source:process.argv[2], destination:process.argv[3]});
 
 
 		}
