@@ -80,7 +80,7 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	
 }
 WSAutoconnectProxy.prototype.close=function(){
-	
+	var me=this;
 	if(me._primedConnection!==null){
 		me._primedConnection.close();
 	}
