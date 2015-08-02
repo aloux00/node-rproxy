@@ -12,6 +12,7 @@ function WSAutoconnectProxy(config){
 
 	var me=this;
 	me._primedConnections=[];
+	me._isRunning=true;
 	for(var i=0;i<10;i++){
 		me._primeSourceConnection(config);
 	}
@@ -59,6 +60,9 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 				if(destination){
 					destination.close();
 				}
+				if(me._isRunning){
+					me._primeSourceConnection(config);
+				}
 			});
 
 			destination.on('message', function message(data, flags) {
@@ -86,7 +90,7 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 }
 WSAutoconnectProxy.prototype.close=function(){
 	var me=this;
-
+	me._isRunning=false;
 	me._primedConnections.forEach(function(con){
 		con.close();
 	});
