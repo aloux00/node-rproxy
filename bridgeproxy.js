@@ -10,28 +10,28 @@ function WSBridgeProxy(config){
 	// Simple websocket server
 
 	var port = config.port;
-	var master=null;
-
+	var serverconnections=[];
+	var clientconnections=[];
 
 	(new (require('ws').Server)({
 		port: port
-	})).on('headers',function(h){
-		//console.log(h);
-	}).on('connection', function(wsclient){
+	})).on('connection', function(wsclient){
 
-		console.log(wsclient.upgradeReq.headers.authorization);
-
-		if(master===null){
-			master=wsclient;
-			console.log('connected a master');
+		if((typeof wsclient.upgradeReq.headers.authorization)!='undefined'){
+			console.log(wsclient.upgradeReq)
+			if(btoa(wsclient.upgradeReq.headers.authorization.split(' ')[1])===config.basicauth){
+				serverconnections.push(wsclient)
+			}else{
+				ws.close(3000, 'Basic auth attempt invalid');
+			}
 		}else{
-
-			var a=master;
-			master=null;
-			var b=wsclient;
-			console.log('connected a client');
-
-
+			clientconnections;
+		}
+		
+		while(serverconnections.length&&clientconnections.length){
+			
+			var a=serverconnections.shift();
+			var b=clientconnections.shift();
 
 			a.on('message', function message(data, flags) {
 				console.log('master sent '+data);
@@ -60,8 +60,11 @@ function WSBridgeProxy(config){
 				}
 
 			});
-
+			
+			
+			
 		}
+
 
 
 
