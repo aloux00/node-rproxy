@@ -49,6 +49,7 @@ for(var i=0;i< 250; i++){
 			this.on('message',function(message){
 				
 				assert.equal(message, 'hello world');
+				console.log('test client #'+i+' recieves: hello world');
 				clearTimeout(tm);
 				this.close();
 				clients--;
@@ -60,7 +61,7 @@ for(var i=0;i< 250; i++){
 					
 				}
 			});
-			
+			console.log('test client #'+i+' sends: hello world');
 			this.send('hello world');
 			
 		});
