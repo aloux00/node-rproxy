@@ -46,7 +46,7 @@ for(var i=0;i< 3; i++){
 		var client=(new ws('ws://localhost:9002')).on('open', function(){
 			var tm=setTimeout(function(){
 				assert.fail('#'+i+' expected response by now.');
-			}, 1000);
+			}, 5000);
 			this.on('message',function(message){
 				
 				assert.equal(message, 'hello world');
