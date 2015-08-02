@@ -19,10 +19,10 @@ function WSAutoconnectProxy(config){
 
 WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var me=this;
-	if(!me._sourceConnections){
-		me._sourceConnections=[];
-		me._destConnections=[];
-	}
+//	if(!me._sourceConnections){
+//		me._sourceConnections=[];
+//		me._destConnections=[];
+//	}
 
 	var WSocket = require('ws');
 
@@ -31,15 +31,15 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	 */
 
 	var source=(new WSocket(config.source)).on('open',function(){
-		me._sourceConnections.push(source);
+		//me._sourceConnections.push(source);
 		console.log('connected proxy');
-
+		me._primedConnection=source;
 	}).once('message', function message(data, flags) {
-
+		me._primedConnection=null;
 
 
 		var dest=(new WSocket(config.destination)).on('open', function() {
-			me._destConnections.push(dest);
+			//me._destConnections.push(dest);
 			
 			dest.send(data);
 			
@@ -79,7 +79,13 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	});
 	
 }
-
+WSAutoconnectProxy.prototype.close=function(){
+	
+	if(me._primedConnection!==null){
+		me._primedConnection.close();
+	}
+	
+}
 
 module.exports=WSAutoconnectProxy;
 
