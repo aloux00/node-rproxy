@@ -13,7 +13,7 @@ function WSBridgeProxy(config){
 	var serverconnections=[];
 	var clientconnections=[];
 	
-	var btoa=require('btoa');
+	var atob=require('atob');
 
 	(new (require('ws').Server)({
 		port: port
@@ -22,7 +22,7 @@ function WSBridgeProxy(config){
 		if((typeof wsclient.upgradeReq.headers.authorization)!='undefined'){
 			console.log(wsclient.upgradeReq)
 			var b64auth=wsclient.upgradeReq.headers.authorization.split(' ')[1];
-			var basicauth=btoa(b64auth);
+			var basicauth=atob(b64auth);
 			if(basicauth===config.basicauth){
 				serverconnections.push(wsclient)
 			}else{
