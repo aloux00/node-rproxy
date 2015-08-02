@@ -9,11 +9,7 @@ function WSBridgeProxy(config){
 
 	// Simple websocket server
 
-	var port = config.websocketPort;
-	if(process.argc==3){
-		port=parseInt(process.argv[2]);
-	}
-
+	var port = config.port;
 	var master=null;
 
 
@@ -82,9 +78,9 @@ module.exports=WSBridgeProxy;
 //console.log(argv);
 
 
-if(argv){
+if(process.argv){
 	var fs=require('fs');
-	fs.realpath(argv[1],function(p1){
+	fs.realpath(process.argv[1],function(p1){
 
 		fs.realpath(__filename,function(p2){
 

@@ -60,9 +60,9 @@ function WSAutoconnectProxy(config){
 
 module.exports=WSAutoconnectProxy;
 
-if(argv){
+if(process.argv){
 	var fs=require('fs');
-	fs.realpath(argv[1],function(p1){
+	fs.realpath(process.argv[1],function(p1){
 		fs.realpath(__filename,function(p2){
 
 			if(p1===p2){
