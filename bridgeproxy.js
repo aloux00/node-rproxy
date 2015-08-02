@@ -16,10 +16,10 @@ function WSBridgeProxy(config){
 	(new (require('ws').Server)({
 		port: port
 	})).on('headers',function(h){
-		console.log(h);
+		//console.log(h);
 	}).on('connection', function(wsclient){
 
-		//console.log(wsclient);
+		console.log(wsclient.upgradeReq);
 
 		if(master===null){
 			master=wsclient;
