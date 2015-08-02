@@ -9,19 +9,21 @@
 
 
 function WSAutoconnectProxy(config){
-	
+
 	var me=this;
-	
-	me._primeSourceConnection(config);
-	
-	
+
+	for(var i=0;i<10){
+		me._primeSourceConnection(config);
+	}
+
+
 };
 
 WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var me=this;
 //	if(!me._sourceConnections){
-//		me._sourceConnections=[];
-//		me._destConnections=[];
+//	me._sourceConnections=[];
+//	me._destConnections=[];
 //	}
 
 	var WSocket = require('ws');
@@ -33,18 +35,19 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var source=(new WSocket(config.source)).on('open',function(){
 		//me._sourceConnections.push(source);
 		console.log('connected proxy');
-		me._primedConnection=source;
+		me._primedConnections.push(source);
 	}).once('message', function message(data, flags) {
-		me._primedConnection=null;
+
+		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
 
 
 		var destination=(new WSocket(config.destination)).on('open', function() {
 			//me._destConnections.push(dest);
-			
+
 			destination.send(data);
-			
-			
-			
+
+
+
 			source.on('message', function message(data, flags) {
 				console.log('autoconnect proxy source sends: '+(typeof data));
 				destination.send(data);
@@ -57,7 +60,7 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 					destination.close();
 				}
 			});
-			
+
 			destination.on('message', function message(data, flags) {
 				console.log('autoconnect proxy destination sends: '+(typeof data));
 				source.send(data);
@@ -65,42 +68,44 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 				console.log('autoconnect proxy destination error: '+error)
 			}).on('close',function(code, message){
 				console.log('autoconnect proxy destination close: '+code+' '+message);
-				
+
 				destination=null;
 				if(source){
 					source.close();
 				}
 
 			});
-			
+
 		});
-		
+
 
 		me._primeSourceConnection(config);
 
 	});
-	
+
 }
 WSAutoconnectProxy.prototype.close=function(){
 	var me=this;
-	if(me._primedConnection!==null){
-		me._primedConnection.close();
-	}
-	
+
+	me._primedConnections.forEach(function(con){
+		con.close();
+	});
+
+
 }
 
 module.exports=WSAutoconnectProxy;
 
 if(process.argv){
-	
+
 	console.log(process.argv);
-	
+
 	var fs=require('fs');
 	fs.realpath(process.argv[1],function(err, p1){
 		fs.realpath(__filename,function(err, p2){
 
 			console.log(p1+' '+p2);
-			
+
 			if(p1===p2){
 
 

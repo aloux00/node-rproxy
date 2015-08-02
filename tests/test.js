@@ -47,7 +47,7 @@ for(var i=0;i< 3; i++){
 			var tm=setTimeout(function(){
 				assert.fail('#'+i+' expected response by now.');
 			}, 5000);
-			this.on('message',function(message){
+			client.on('message',function(message){
 				
 				assert.equal(message, 'hello world');
 				console.log('test client #'+i+' recieves: hello world');
