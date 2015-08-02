@@ -1,10 +1,11 @@
 /**
+ * Bridge proxy
  * 
  */
 
-var config=require('./slaveproxy.json');
 
-(function(){
+
+function WSBridgeProxy(config){
 
 	// Simple websocket server
 	
@@ -73,8 +74,29 @@ var config=require('./slaveproxy.json');
 		
 	console.log('websocket listening on: '+port);
 
-})();
+};
+
+module.exports=WSBridgeProxy;
 
 
+//console.log(argv);
 
+var fs=require('fs');
+if(fs.realpath(argv[1],function(p1){
+	fs.realpath(__filename,function(p2){
+		
+		if(p1===p2){
+			
+			
+			if(process.argc==3){
+				new WSBridgeProxy({port:parseInt(process.argv[2])});
+			}else{
+				new WSBridgeProxy(require('./bridgeproxy.json'));
+			}
+			
+			
+		}
+		
+	});
+});
 
