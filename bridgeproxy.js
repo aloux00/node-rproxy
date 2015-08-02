@@ -14,16 +14,12 @@ function WSBridgeProxy(config){
 
 
 	(new (require('ws').Server)({
-		port: port,
-		verifyClient:function(info){
-			console.log(info);
-			return true;
-		}
+		port: port
 	})).on('headers',function(h){
 		console.log(JSON.stringify(h));
 	}).on('connection', function(wsclient){
 
-
+		console.log(wsclient);
 
 		if(master===null){
 			master=wsclient;

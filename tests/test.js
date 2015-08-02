@@ -22,7 +22,7 @@ var echo=(new ws.Server({
 var WSBridge=require('../bridgeproxy.js');
 var bridge=new WSBridge({port:9002});
 var WSAuto=require('../autoconnectproxy.js');
-var autoconnect=new WSAuto({source:'ws://localhost:9002', destination:'ws://localhost:9001'});
+var autoconnect=new WSAuto({source:'ws://nickolanack:nick@localhost:9002', destination:'ws://localhost:9001'});
 
 var clients=0;
 
