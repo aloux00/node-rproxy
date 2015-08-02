@@ -25,7 +25,8 @@ function WSBridgeProxy(config){
 			if(basicauth===config.basicauth){
 				serverconnections.push(wsclient)
 			}else{
-				wsclient.close(3000, 'Basic auth attempt invalid: '+basicauth+' | '+config.basicauth);
+				console.log('Basic auth attempt invalid: '+basicauth+' | '+config.basicauth)
+				wsclient.close(3000,'Basic auth attempt invalid');
 			}
 		}else{
 			clientconnections;
