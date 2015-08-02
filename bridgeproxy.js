@@ -27,47 +27,47 @@ function WSBridgeProxy(config){
 			var basicauth=atob(b64auth);
 			if(basicauth===config.basicauth){
 				serverconnections.push(wsclient)
-				console.log('added server socket');
+				console.log('bridge recieved server socket');
 			}else{
-				console.log('Basic auth attempt invalid: '+b64auth+' = ' +basicauth+' | '+config.basicauth)
-				wsclient.close(3000,'Basic auth attempt invalid');
+				console.log('bridge basic auth attempt invalid: '+b64auth+' = ' +basicauth+' | '+config.basicauth)
+				wsclient.close(3000,'bridge basic auth attempt invalid');
 			}
 		}else{
 			clientconnections.push(wsclient);
-			console.log('added client socket');
+			console.log('bridge recieved client socket');
 		}
 
 		while(serverconnections.length&&clientconnections.length){
 
-			console.log('paired sockets');
+			console.log('bridge paired sockets: server::client');
 
-			var a=serverconnections.shift();
-			var b=clientconnections.shift();
+			var server=serverconnections.shift();
+			var client=clientconnections.shift();
 
-			a.on('message', function message(data, flags) {
-				console.log('master sent '+data);
-				b.send(data);
+			server.on('message', function message(data, flags) {
+				console.log('bridge server sends: '+(typeof data));
+				client.send(data);
 			}).on('error',function(error){
-				console.log('a error: '+error)
+				console.log('bridge server error: '+error)
 			}).on('close',function(code, message){
-				console.log('a close: '+code+' '+message);
-				a=null;
-				if(b){
-					b.close();
+				console.log('bridge server close: '+code+' '+message);
+				server=null;
+				if(client){
+					client.close();
 				}
 			});
 
-			b.on('message', function message(data, flags) {
-				console.log('client sent '+data);
-				a.send(data);
+			client.on('message', function message(data, flags) {
+				console.log('bridge client sends: '+(typeof data));
+				server.send(data);
 
 			}).on('error',function(error){
-				console.log('b error: '+error)
+				console.log('bridge client error: '+error)
 			}).on('close',function(code, message){
-				console.log('b close: '+code+' '+message);
-				b=null;
-				if(a){
-					a.close();
+				console.log('bridge client  close: '+code+' '+message);
+				client=null;
+				if(server){
+					server.close();
 				}
 
 			});

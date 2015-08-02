@@ -38,33 +38,35 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		me._primedConnection=null;
 
 
-		var dest=(new WSocket(config.destination)).on('open', function() {
+		var destination=(new WSocket(config.destination)).on('open', function() {
 			//me._destConnections.push(dest);
 			
-			dest.send(data);
+			destination.send(data);
 			
 			
 			
 			source.on('message', function message(data, flags) {
-				dest.send(data);
+				console.log('autoconnect proxy source sends: '+(typeof data));
+				destination.send(data);
 			}).on('error',function(error){
-				console.log('a error: '+error)
+				console.log('autoconnect proxy source error: '+error)
 			}).on('close',function(code, message){
-				console.log('a close: '+code+' '+message);
+				console.log('autoconnect proxy source close: '+code+' '+message);
 				source=null;
-				if(dest){
-					dest.close();
+				if(destination){
+					destination.close();
 				}
 			});
 			
-			dest.on('message', function message(data, flags) {
+			destination.on('message', function message(data, flags) {
+				console.log('autoconnect proxy destination sends: '+(typeof data));
 				source.send(data);
 			}).on('error',function(error){
-				console.log('b error: '+error)
+				console.log('autoconnect proxy destination error: '+error)
 			}).on('close',function(code, message){
-				console.log('b close: '+code+' '+message);
+				console.log('autoconnect proxy destination close: '+code+' '+message);
 				
-				dest=null;
+				destination=null;
 				if(source){
 					source.close();
 				}
