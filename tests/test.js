@@ -21,9 +21,9 @@ var echo=(new ws.Server({
 
 
 // a bridge server.
-var bridge=(new (require('../WSBridgeProxy.js').WSBridgeProxy)({port:9002}));
+var bridge=(new (require('../bridgeproxy.js'))({port:9002}));
 
-var autoconnect=(new (require('../WSAutoconnectProxy.js').WSAutoconnectProxy)({source:'ws://localhost:9002', destination:'ws://localhost:9001'}));
+var autoconnect=(new (require('../autoconnectproxy.js'))({source:'ws://localhost:9002', destination:'ws://localhost:9001'}));
 
 
 var client=(new ws('ws://localhost:9002')).on('open', function(){
