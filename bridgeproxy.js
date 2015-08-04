@@ -81,7 +81,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 			
 			me._bufferedClients.splice(i,1);
 			me._buffers.splice(i,1);
-			client.removeEventListener('message', me._handlers[i]);
+			client.removeListener('message', me._handlers[i]);
 			me._handlers.splice(i,1);
 		}
 		
