@@ -85,7 +85,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	
 	me._bufferedClients.push(wsclient);
 	var buffer=[];
-	me._buffers.push([]);
+	me._buffers.push(buffer);
 	var handler=function message(data, flags) {
 		buffer.push(data);
 	}
