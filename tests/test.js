@@ -66,7 +66,7 @@ for(var i=0;i< 250; i++){
 				console.log('test client #'+i+' sends: hello world');
 
 				client.send('hello world');
-			}, 10);
+			}, i*100);
 
 		});
 	})(i);
