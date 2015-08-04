@@ -32,7 +32,7 @@ function WSBridgeProxy(config){
 			freeClientConnections.push(wsclient);
 			console.log('bridge recieved client socket');
 			me._bufferSocket(wsclient);
-			clientCounter++;
+		
 		}
 
 		
