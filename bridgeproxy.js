@@ -69,6 +69,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 		
 		me._flushBuffers=function(server, client){
 			var i=me._bufferedClients.indexOf(client);
+			console.log('flushing buffer '+i+': '+(typeof me._buffers[i]));
 			me._buffers[i].forEach(function(message){
 				server.send(message);
 			});
