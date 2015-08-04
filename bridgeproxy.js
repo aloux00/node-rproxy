@@ -59,9 +59,14 @@ function WSBridgeProxy(config){
 
 };
 WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
+
+
 WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	var me=this;
 	if(!me._flushBuffers){
+		
+		console.log('init buffer handler');
+	
 		
 		me._bufferedClients=[];
 		me._buffers=[];
@@ -92,7 +97,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	}
 	me._handlers.push(handler);
 	wsclient.on('message', handler);
-	
+	console.log('buffering client: @['+me._bufferedClients.indexOf(wsclient)+']');
 };
 
 WSBridgeProxy.prototype._isSocketAttemptingAuth=function(wsclient){
