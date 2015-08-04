@@ -130,7 +130,7 @@ WSBridgeProxy.prototype._connectSockets=function(server, client){
 		console.log('bridge server close: '+code+' '+message);
 		server=null;
 		if(client){
-			me.emit('unpair', [server, client]);
+			me.emit('unpair', server, client);
 			client.close();
 		}
 	});
@@ -145,7 +145,7 @@ WSBridgeProxy.prototype._connectSockets=function(server, client){
 		console.log('bridge client  close: '+code+' '+message);
 		client=null;
 		if(server){
-			me.emit('unpair', [server, client]);
+			me.emit('unpair', server, client);
 			server.close();
 		}
 		
@@ -153,7 +153,7 @@ WSBridgeProxy.prototype._connectSockets=function(server, client){
 
 	});
 	
-	me.emit('pair', [server, client]);
+	me.emit('pair', server, client);
 	
 	
 	
