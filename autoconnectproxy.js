@@ -114,7 +114,7 @@ if(process.argv){
 
 
 				if(process.argc!=4){
-					throw new Error('Requires websocket source and destination address arguments: ie: www.host.com:port/path');
+					throw new Error('Requires websocket source and destination address arguments: ie: www.host.com:port/path ('+process.argc+')');
 				}
 
 				if(process.argv[2].indexOf('ws:')!==0){
