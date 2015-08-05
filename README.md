@@ -20,15 +20,18 @@ Anyway the rpi serves the app, and using node-rproxy it is intended to be able t
  
 ##rproxy setup
 
-rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides connections to the public wesocket proxy (slaveproxy.js) that connects to real clients. autoconnectproxy.js assumes that the client (real client) initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. slaveproxy.js is a websocket server that must distinguish between connections from autoconnectproxy.js and real clients and for each real client, it must have a autoconnectproxy connection to pair. alternatively, it would be possible to use a seperate port for server and client connections 
+rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides connections to the public wesocket proxy (bridgeproxy.js) that connects to real clients. autoconnectproxy.js assumes that the client (real client) initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. bridgeproxy.js is a websocket server that must distinguish between connections from autoconnectproxy.js and real clients and for each real client, it must have a autoconnectproxy connection to pair. alternatively, it would be possible to use a seperate port for server and client connections 
 however in my situation I only have any publicly open ports to spare.
 
-slaveproxy.js is run like this on the public server: 
+bridgeproxy.js is run like this on the public server: 
 ```
+ # assuming that you want to server your websocket app to the world on port 8080
 
- # start rproxy slaveproxy.js
- # this will start the public proxy server, without any endpoint set up.
- node slaveproxy.js 8080
+ # log into your public server
+ # start rproxy bridgeproxy.js
+ # this will start the public proxy server, without any endpoint set up. but clients can connect immediately
+ sudo node bridgeproxy.js 8080 username:password
+ 
 ```
 
 autoconnectproxy.js is run like this on the webapp private server: 
@@ -38,7 +41,8 @@ autoconnectproxy.js is run like this on the webapp private server:
  
  # start rproxy autoconnectproxy.js
  # this will connect to the public server immediately so it should be running...
- node autoconnectproxy.js ws://my.public.websocket:8080 ws://localhost:8080
+ node autoconnectproxy.js ws://username:password@my.public.websocket:8080 ws://localhost:8080
+ 
 ```
 
 
