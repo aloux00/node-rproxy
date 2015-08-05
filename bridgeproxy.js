@@ -192,7 +192,7 @@ if(process.argv){
 				if(process.argc>=3){
 					var opt={port:parseInt(process.argv[2])};
 					if(process.argc>3){
-						{basicauth:process.argv[2]}
+						opt.basicauth=process.argv[2];
 					}
 					new WSBridgeProxy(opt);
 				}else{
