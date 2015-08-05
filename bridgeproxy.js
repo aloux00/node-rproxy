@@ -170,11 +170,13 @@ WSBridgeProxy.prototype.close=function(){
 module.exports=WSBridgeProxy;
 
 
-//console.log(argv);
+
 
 
 if(process.argv){
-
+	if(!process.argc){
+		process.argc=process.argv.length;
+	}
 	console.log(process.argv);
 
 	var fs=require('fs');
