@@ -103,7 +103,9 @@ module.exports=WSAutoconnectProxy;
 if(process.argv){
 
 	console.log(process.argv);
-
+	if(!process.argc){
+		process.argc=process.argv.length;
+	}
 	var fs=require('fs');
 	fs.realpath(process.argv[1],function(err, p1){
 		fs.realpath(__filename,function(err, p2){
