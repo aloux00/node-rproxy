@@ -7,6 +7,11 @@
  */
 
 
+var debug=false
+var log=console.log;
+var console={log:function(message){
+	if(debug)log(message);
+}};
 
 function WSAutoconnectProxy(config){
 

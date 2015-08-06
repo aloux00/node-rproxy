@@ -4,6 +4,12 @@
  */
 
 
+var debug=false
+var log=console.log;
+var console={log:function(message){
+	if(debug)log(message);
+}};
+
 var events = require('events');
 function WSBridgeProxy(config){
 	

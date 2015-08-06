@@ -57,9 +57,11 @@ for(var i=0;i< 250; i++){
 					clients--;
 					if(clients==0){
 
-						echo.close();
-						autoconnect.close();
-						bridge.close();
+						setTimeout(function(){
+							echo.close();
+							autoconnect.close();
+							bridge.close();
+						},100);
 
 					}
 				});
