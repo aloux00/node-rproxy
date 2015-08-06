@@ -59,27 +59,18 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 			source.on('message', function message(data, flags) {
 				log('autoconnect proxy source sends: '+(typeof data));
 				destination.send(data);
-			}).on('error',function(error){
-				log('autoconnect proxy source error: '+error)
 			}).on('close',function(code, message){
-				log('autoconnect proxy source close: '+code+' '+message);
+
 				source=null;
 				if(destination){
 					destination.close();
-				}
-				if(me._isRunning){
-					me._primeSourceConnection(config);
 				}
 			});
 
 			destination.on('message', function message(data, flags) {
 				log('autoconnect proxy destination sends: '+(typeof data));
 				source.send(data);
-			}).on('error',function(error){
-				log('autoconnect proxy destination error: '+error)
 			}).on('close',function(code, message){
-				log('autoconnect proxy destination close: '+code+' '+message);
-
 				destination=null;
 				if(source){
 					source.close();
@@ -87,11 +78,22 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 
 			});
 
+		}).on('error',function(error){
+			console.log('autoconnect proxy destination error: '+error)
+		}).on('close',function(code, message){
+			console.log('autoconnect proxy destination close: '+code+' '+message);
 		});
 
 
 		me._primeSourceConnection(config);
 
+	}).on('close',function(code, message){
+		log('autoconnect proxy source close: '+code+' '+message);
+		if(me._isRunning){
+			me._primeSourceConnection(config);
+		}
+	}).on('error',function(error){
+		log('autoconnect proxy source error: '+error)
 	});
 
 }
