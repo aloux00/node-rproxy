@@ -14,7 +14,7 @@ var log=function(message){
 		console.log(message);
 	}
 };
-
+var events = require('events');
 function WSAutoconnectProxy(config){
 
 	var me=this;
@@ -26,6 +26,8 @@ function WSAutoconnectProxy(config){
 
 
 };
+WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
+
 
 WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var me=this;
