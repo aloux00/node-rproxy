@@ -32,12 +32,16 @@ use for this application is to provide functionality in situations where it is n
 
 bridgeproxy.js is run like this on the public server: 
 ```
- # assuming that you want to server your websocket app to the world on port 8080
+ # assuming that you want to serve your websocket app to the world on port 8080
 
  # log into your public server
  # start rproxy bridgeproxy.js
- # this will start the public proxy server, without any endpoint set up. but clients can connect immediately
+ # this will start the public proxy server, without any endpoint set up. but clients 
+ # can connect immediatel, and will be buffered.
+ 
  sudo node bridgeproxy.js 8080 username:password
+ 
+ # username:password is used to differentiate client and autoconnectproxy connections
  
 ```
 
@@ -48,7 +52,10 @@ autoconnectproxy.js is run like this on the webapp private server:
  
  # start rproxy autoconnectproxy.js
  # this will connect to the public server immediately so it should be running...
+ 
  node autoconnectproxy.js ws://username:password@my.public.websocket:8080 ws://localhost:8080
+ 
+ # username:password should match that of bridgeproxy.js
  
 ```
 
