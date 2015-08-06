@@ -21,7 +21,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 		wsclient.on('message',function(message){
 			wsclient.send(message);
-			console.log('endpoint echos: '+message);
+			//console.log('endpoint echos: '+message);
 		})
 
 	});
@@ -44,6 +44,14 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 	var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:'+config.bridge, destination:'ws://localhost:'+config.echo});
 
 	var clients=0;
+	
+	if(typeof(config.beforeTest)=='function'){
+		config.beforeTest({
+			echo:echo,
+			bridge:bridge,
+			autoconnect:autoconnect
+		})
+	}
 
 	var num=config.count;
 	for(var i=0;i< num; i++){
@@ -100,6 +108,20 @@ var series=require("async").series(
         function(callback){
         	//test using index, this should be the same as require('node-rproxy')
         	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004, count:5}, callback);
+        },function(callback){
+        	
+        	
+       
+        	//trigger errors. application stops running
+        	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:5, beforeTest:function(sockets){
+        		
+        		sockets.echo.close(); //kill the 'application server' but keep the proxies
+        		
+        		
+        	}}, callback);
+        	
+        	
+        	
         }
         ],
         function(err, results) {
