@@ -7,10 +7,10 @@
  */
 
 
-var debug=false
+var verbose=false
 
 var log=function(message){
-	if(debug){
+	if(verbose){
 		console.log(message);
 	}
 };
@@ -88,12 +88,12 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		me._primeSourceConnection(config);
 
 	}).on('close',function(code, message){
-		log('autoconnect proxy source close: '+code+' '+message);
+		console.log('autoconnect proxy source close: '+code+' '+message);
 		if(me._isRunning){
 			me._primeSourceConnection(config);
 		}
 	}).on('error',function(error){
-		log('autoconnect proxy source error: '+error)
+		console.log('autoconnect proxy source error: '+error)
 	});
 
 }
