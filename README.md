@@ -2,6 +2,7 @@
 
 # node-rproxy
 kind of like a proxy web server - but the endpoint is established and maintained by the endpoint itself so that it can easily exist behind a NAT. 
+without any dmz/port forwarding config
 
 This project is proof of concept at this point, and should not be used in any sort of production environment.
 
@@ -9,7 +10,7 @@ This project is proof of concept at this point, and should not be used in any so
 I have a websever (webapp) that is behind a firewall/NAT such that there is no way for clients to establish a connection. 
 Port forwarding is not an option - and relying on port forwarding is not great anyway, in my oppinion (even if it's just one less thing to configure). 
 I do, however, have access to a public webserver and i would like to use it to proxy my private webapp but the webapp will
-have to establish the connection to the public proxy server becuase the public proxy server can't. 
+have to establish the connection to the public proxy server becuase the public proxy server can't make the connection to the sever in private network. 
 
  - why not just put the private webapp on the public server? The app is run on a raspberry pi and serves a website that controls devices 
  in my home. sprinker system, lights, automatic blinds, climate control, etc (well I haven't quite got all that set up). anyway it is 
