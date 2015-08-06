@@ -35,7 +35,7 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 
 	var source=(new WSocket(config.source)).on('open',function(){
 		//me._sourceConnections.push(source);
-		console.log('connected proxy');
+		console.log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
 		me._primedConnections.push(source);
 	}).once('message', function message(data, flags) {
 
