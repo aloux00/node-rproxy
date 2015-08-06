@@ -22,6 +22,7 @@
   },
   "dependencies":{
     "ws":"latest",
-    "atob":"latest"
+    "atob":"latest",
+    "async":"latest"
   }
 }

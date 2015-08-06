@@ -10,8 +10,8 @@ var ws=require('ws');
 
 
 function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
-	
-	
+
+
 	//a ws server that just echos back all messages...
 	var echo=(new ws.Server({
 		port: ports.echo
@@ -23,7 +23,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 		})
 
 	});
-	
+
 	var basicauth='';
 	basicauth='nickolanack:nick';
 
@@ -52,6 +52,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 				setTimeout(function(){
 					var tm=setTimeout(function(){
 						assert.fail('#'+i+' expected response by now.');
+						callback(true, false);
 					}, 10000);
 					client.on('message',function(message){
 
@@ -66,6 +67,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 								echo.close();
 								autoconnect.close();
 								bridge.close();
+								callback(true, false);
 							},100);
 
 						}
@@ -73,11 +75,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 					console.log('test client #'+i+' sends: hello world');
 
 					client.send('hello world');
-					if(i==num-1){
-						if((typeof callback)=='function'){
-							callback();
-						}
-					}
+					
 				}, i*100);
 
 			});
@@ -87,12 +85,19 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 
 }
 
-//test direct load
-EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002}, function(){
-	
-	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004});
-	
-});
+var series=require("async").series(
+		[
+        function(callback){
+        	EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002},callback);
+        }
+        function(callback){
+        	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004}, callback);
+        }       
+        ],
+        function(err, results) {
+		    console.log(err);
+		    console.log(results);
+		});
 
 
 
