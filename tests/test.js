@@ -54,7 +54,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 				setTimeout(function(){
 					var tm=setTimeout(function(){
 						assert.fail('test '+test+' client#'+i+' expected response by now.');
-						callback(true, false);
+						callback(true);
 					}, 10000);
 					client.on('message',function(message){
 
@@ -69,7 +69,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 								echo.close();
 								autoconnect.close();
 								bridge.close();
-								callback(true, false);
+								callback(null);
 							},100);
 
 						}
