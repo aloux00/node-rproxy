@@ -7,11 +7,13 @@ assert.equal(true, true);
 
 var ws=require('ws');
 
-
+var testNumber=0;
 
 function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
-
+	var test=testNumber;
+	testNumber++;
+	
 	//a ws server that just echos back all messages...
 	var echo=(new ws.Server({
 		port: config.echo
@@ -51,13 +53,13 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 			var client=(new ws('ws://localhost:'+config.bridge)).on('open', function(){
 				setTimeout(function(){
 					var tm=setTimeout(function(){
-						assert.fail('#'+i+' expected response by now.');
+						assert.fail('test '+test+' client#'+i+' expected response by now.');
 						callback(true, false);
 					}, 10000);
 					client.on('message',function(message){
 
-						assert.equal(message, 'hello world');
-						console.log('test client #'+i+' recieves: hello world');
+						assert.equal(message, 'hello world', 'test '+test+' client#'+i+' echo failure, recieved: '+message);
+						console.log('test '+test+' client#'+i+' success');
 						clearTimeout(tm);
 						this.close();
 						clients--;
@@ -72,7 +74,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 						}
 					});
-					console.log('test client #'+i+' sends: hello world');
+					//console.log('test client #'+i+' sends: hello world');
 
 					client.send('hello world');
 					
