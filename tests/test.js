@@ -89,7 +89,7 @@ var series=require("async").series(
 		[
         function(callback){
         	EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002},callback);
-        }
+        },
         function(callback){
         	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004}, callback);
         }       
