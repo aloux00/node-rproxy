@@ -22,8 +22,12 @@ Anyway the rpi serves the app, and using node-rproxy it is intended to be able t
  
 ##rproxy setup
 
-rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides connections to the public wesocket proxy (bridgeproxy.js) that connects to real clients. autoconnectproxy.js assumes that the client (real client) initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. bridgeproxy.js is a websocket server that must distinguish between connections from autoconnectproxy.js and real clients and for each real client, it must have a autoconnectproxy connection to pair. alternatively, it would be possible to use a seperate port for server and client connections 
-however in my situation I only have any publicly open ports to spare.
+<img src="https://raw.github.com/nickolanack/node-rproxy/master/diagram.png" height="300px"/>
+
+rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides connections to the public wesocket proxy (bridgeproxy.js) that connects to real clients. autoconnectproxy.js assumes that the client (real client) initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. bridgeproxy.js is a websocket server that must distinguish between connections from autoconnectproxy.js and real clients and for each real client, it must have aa autoconnectproxy connection ready to pair (otherwise the client is buffered until one is ready). 
+
+Alternatively, I could have used a seperate ports for server and client connections however in my situation I have a limited number publicly open ports, And the primary
+use for this application is to provide functionality in situations where it is not possible to configure firewall/router settings.
 
 bridgeproxy.js is run like this on the public server: 
 ```
@@ -47,5 +51,5 @@ autoconnectproxy.js is run like this on the webapp private server:
  
 ```
 
-<img src="https://raw.github.com/nickolanack/node-rproxy/master/diagram.png" height="300px"/>
+
 
