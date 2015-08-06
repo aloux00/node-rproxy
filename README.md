@@ -24,7 +24,7 @@ Anyway the rpi serves the app, and using node-rproxy it is intended to be able t
 
 <img src="https://raw.github.com/nickolanack/node-rproxy/master/diagram.png" height="300px"/>
 
-rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides connections to the public wesocket proxy (bridgeproxy.js) that connects to real clients. autoconnectproxy.js assumes that the client (real client) initiates communication by sending data first. autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. bridgeproxy.js is a websocket server that must distinguish between connections from autoconnectproxy.js and real clients and for each real client, it must have aa autoconnectproxy connection ready to pair (otherwise the client is buffered until one is ready). 
+rproxy autoconnect (autoconnectproxy.js) runs on the endpoint and provides connections to the public wesocket proxy (bridgeproxy.js) that connects to real clients. **autoconnectproxy.js assumes that the client (real client) initiates communication by sending data first** (request - response). autoconnectproxy.js waits for the first message and then connects the other end of the connection to the real webserver app. bridgeproxy.js is a websocket server that must distinguish between connections from autoconnectproxy.js and real clients and for each real client, it must have aa autoconnectproxy connection ready to pair (otherwise the client is buffered until one is ready). 
 
 Alternatively, I could have used a seperate ports for server and client connections however in my situation I have a limited number publicly open ports, And the primary
 use for this application is to provide functionality in situations where it is not possible to configure firewall/router settings.
@@ -51,5 +51,8 @@ autoconnectproxy.js is run like this on the webapp private server:
  
 ```
 
-
+note: autoconnectproxy.js waits for data from the client, before connecting it's other end to the application. This is becuase autoconnectproxy.js creates a number of 'primed'
+connections with the brideproxy server, and thus autoconnectproxy.js has no way of knowing when a client connects other than on transfer of data. Additionally, I did not want
+the application server to have connections from autoconnectproxy.js before real clients are established becuase any data sent from the application in this case would be discarded
+and might cause strange behavior depending on what the application does. 
 
