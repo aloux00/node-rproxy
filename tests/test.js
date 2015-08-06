@@ -58,6 +58,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 		clients++;
 		(function(i){
+			var success=false;
 			var client=(new ws('ws://localhost:'+config.bridge)).on('open', function(){
 				setTimeout(function(){
 					var tm=setTimeout(function(){
@@ -68,6 +69,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 						assert.equal(message, 'hello world', 'test '+test+' client#'+i+' echo failure, recieved: '+message);
 						console.log('test '+test+' client#'+i+' success');
+						success=true;
 						clearTimeout(tm);
 						this.close();
 						clients--;
@@ -88,6 +90,16 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 					
 				}, i*100);
 
+			}).on('close', function(code, message){
+				
+				if(!success){
+					assert.fail('test '+test+' client#'+i+' closed before sending anything: '+code+' - '+message);
+				}
+				
+			}).on('error',function(error){
+				
+				assert.fail('test '+test+' client#'+i+' error: '+error);
+				
 			});
 		})(i);
 
@@ -118,7 +130,7 @@ var series=require("async").series(
         		sockets.echo.close(); //kill the 'application server' but keep the proxies
         		
         		
-        	}}, callback);
+        	}, after}, callback);
         	
         	
         	
