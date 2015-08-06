@@ -9,12 +9,12 @@ var ws=require('ws');
 
 
 
-function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
+function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 
 	//a ws server that just echos back all messages...
 	var echo=(new ws.Server({
-		port: ports.echo
+		port: config.echo
 	})).on('connection', function(wsclient){
 
 		wsclient.on('message',function(message){
@@ -31,7 +31,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 //	a bridge server. pairs clients with autoconnect proxy connections.
 	var WSBridge=require('../bridgeproxy.js');
 	var bridge=new WSBridge({
-		port:ports.bridge,
+		port:config.bridge,
 		basicauth:basicauth
 	});
 	var WSAuto=require('../autoconnectproxy.js');
@@ -39,16 +39,16 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 	if(basicauth.length){
 		basicauth=basicauth+'@';
 	}
-	var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:'+ports.bridge, destination:'ws://localhost:'+ports.echo});
+	var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:'+config.bridge, destination:'ws://localhost:'+config.echo});
 
 	var clients=0;
 
-	var num=50
+	var num=config.count;
 	for(var i=0;i< num; i++){
 
 		clients++;
 		(function(i){
-			var client=(new ws('ws://localhost:'+ports.bridge)).on('open', function(){
+			var client=(new ws('ws://localhost:'+config.bridge)).on('open', function(){
 				setTimeout(function(){
 					var tm=setTimeout(function(){
 						assert.fail('#'+i+' expected response by now.');
@@ -88,11 +88,17 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 var series=require("async").series(
 		[
         function(callback){
-        	EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002},callback);
+        	//test direct load
+        	EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:50},callback);
         },
         function(callback){
-        	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004}, callback);
-        }       
+        	// test same ports - cleanup must complete
+        	EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:5},callback);
+        },
+        function(callback){
+        	//test using index, this should be the same as require('node-rproxy')
+        	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004, count:5}, callback);
+        }
         ],
         function(err, results) {
 		    console.log(err);
