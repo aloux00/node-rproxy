@@ -86,5 +86,5 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports){
 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002});
 
 //test package.json load
-EchoTest(require('../node-rproxy').AutoConnect, require('../node-rproxy').Bridge, {echo:9003, bridge:9004});
+EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004});
 
