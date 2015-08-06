@@ -85,6 +85,6 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports){
 //test direct load
 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002});
 
-//test package.json load
+//test index.js
 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004});
 
