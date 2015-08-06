@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nickolanack/node-rproxy.svg?branch=master)](https://travis-ci.org/nickolanack/node-rproxy)
+
 # node-rproxy
 kind of like a proxy web server - but the endpoint is established and maintained by the endpoint itself so that it can easily exist behind a NAT. 
 
