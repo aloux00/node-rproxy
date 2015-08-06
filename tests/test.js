@@ -44,7 +44,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports){
 	var clients=0;
 
 
-	for(var i=0;i< 100; i++){
+	for(var i=0;i< 50; i++){
 
 		clients++;
 		(function(i){
@@ -52,7 +52,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports){
 				setTimeout(function(){
 					var tm=setTimeout(function(){
 						assert.fail('#'+i+' expected response by now.');
-					}, 5000);
+					}, 10000);
 					client.on('message',function(message){
 
 						assert.equal(message, 'hello world');
