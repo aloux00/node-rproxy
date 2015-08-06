@@ -8,10 +8,12 @@
 
 
 var debug=false
-var log=console.log;
-var console={log:function(message){
-	if(debug)log(message);
-}};
+
+var log=function(message){
+	if(debug){
+		console.log(message);
+	}
+};
 
 function WSAutoconnectProxy(config){
 
@@ -40,7 +42,7 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 
 	var source=(new WSocket(config.source)).on('open',function(){
 		//me._sourceConnections.push(source);
-		console.log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
+		log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
 		me._primedConnections.push(source);
 	}).once('message', function message(data, flags) {
 
@@ -55,12 +57,12 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 
 
 			source.on('message', function message(data, flags) {
-				console.log('autoconnect proxy source sends: '+(typeof data));
+				log('autoconnect proxy source sends: '+(typeof data));
 				destination.send(data);
 			}).on('error',function(error){
-				console.log('autoconnect proxy source error: '+error)
+				log('autoconnect proxy source error: '+error)
 			}).on('close',function(code, message){
-				console.log('autoconnect proxy source close: '+code+' '+message);
+				log('autoconnect proxy source close: '+code+' '+message);
 				source=null;
 				if(destination){
 					destination.close();
@@ -71,12 +73,12 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 			});
 
 			destination.on('message', function message(data, flags) {
-				console.log('autoconnect proxy destination sends: '+(typeof data));
+				log('autoconnect proxy destination sends: '+(typeof data));
 				source.send(data);
 			}).on('error',function(error){
-				console.log('autoconnect proxy destination error: '+error)
+				log('autoconnect proxy destination error: '+error)
 			}).on('close',function(code, message){
-				console.log('autoconnect proxy destination close: '+code+' '+message);
+				log('autoconnect proxy destination close: '+code+' '+message);
 
 				destination=null;
 				if(source){
@@ -107,7 +109,7 @@ module.exports=WSAutoconnectProxy;
 
 if(process.argv){
 
-	console.log(process.argv);
+	log(process.argv);
 	if(!process.argc){
 		process.argc=process.argv.length;
 	}
@@ -115,7 +117,7 @@ if(process.argv){
 	fs.realpath(process.argv[1],function(err, p1){
 		fs.realpath(__filename,function(err, p2){
 
-			console.log(p1+' '+p2);
+			log(p1+' '+p2);
 
 			if(p1===p2){
 

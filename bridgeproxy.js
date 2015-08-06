@@ -5,10 +5,12 @@
 
 
 var debug=false
-var log=console.log;
-var console={log:function(message){
-	if(debug)log(message);
-}};
+
+var log=function(message){
+	if(debug){
+		console.log(message);
+	}
+};
 
 var events = require('events');
 function WSBridgeProxy(config){
@@ -29,14 +31,14 @@ function WSBridgeProxy(config){
 		
 			if(me._authorizeSocketAsServerConnection(wsclient, config.basicauth)){
 				freeServerConnections.push(wsclient)
-				console.log('bridge recieved server socket');
+				log('bridge recieved server socket');
 			}else{
 				wsclient.close(3000,'bridge basic auth attempt invalid');
 				return;
 			}
 		}else{
 			freeClientConnections.push(wsclient);
-			console.log('bridge recieved client socket');
+			log('bridge recieved client socket');
 			me._bufferSocket(wsclient);
 		
 		}
@@ -58,10 +60,10 @@ function WSBridgeProxy(config){
 
 
 	}).on('error', function(error){
-		console.log('error: '+error);
+		log('error: '+error);
 	});
 
-	console.log('websocket listening on: '+port);
+	log('websocket listening on: '+port);
 
 };
 WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
@@ -71,7 +73,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	var me=this;
 	if(!me._flushBuffers){
 		
-		console.log('init buffer handler');
+		log('init buffer handler');
 	
 		
 		me._bufferedClients=[];
@@ -80,7 +82,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 		
 		me._flushBuffers=function(server, client){
 			var i=me._bufferedClients.indexOf(client);
-			console.log('flushing buffer '+i+': '+(typeof me._buffers[i])+' server:'+server+' client:'+client);
+			log('flushing buffer '+i+': '+(typeof me._buffers[i])+' server:'+server+' client:'+client);
 			me._buffers[i].forEach(function(message){
 				server.send(message);
 			});
@@ -103,7 +105,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	}
 	me._handlers.push(handler);
 	wsclient.on('message', handler);
-	console.log('buffering client: @['+me._bufferedClients.indexOf(wsclient)+']');
+	log('buffering client: @['+me._bufferedClients.indexOf(wsclient)+']');
 };
 
 WSBridgeProxy.prototype._isSocketAttemptingAuth=function(wsclient){
@@ -117,23 +119,23 @@ WSBridgeProxy.prototype._authorizeSocketAsServerConnection=function(wsclient, ba
 	if(auth===basicauth){
 		return true;
 	}else{
-		console.log('bridge basic auth attempt invalid: '+b64auth+' = ' +auth+' | '+basicauth)
+		log('bridge basic auth attempt invalid: '+b64auth+' = ' +auth+' | '+basicauth)
 		return false;
 	}
 };
 
 WSBridgeProxy.prototype._connectSockets=function(server, client){
-	console.log('bridge paired sockets: server::client');
+	log('bridge paired sockets: server::client');
 
 	var me=this;
 
 	server.on('message', function message(data, flags) {
-		console.log('bridge server sends: '+(typeof data));
+		log('bridge server sends: '+(typeof data));
 		client.send(data);
 	}).on('error',function(error){
-		console.log('bridge server error: '+error)
+		log('bridge server error: '+error)
 	}).on('close',function(code, message){
-		console.log('bridge server close: '+code+' '+message);
+		log('bridge server close: '+code+' '+message);
 		server=null;
 		if(client){
 			me.emit('unpair', server, client);
@@ -142,13 +144,13 @@ WSBridgeProxy.prototype._connectSockets=function(server, client){
 	});
 
 	client.on('message', function message(data, flags) {
-		console.log('bridge client sends: '+(typeof data));
+		log('bridge client sends: '+(typeof data));
 		server.send(data);
 
 	}).on('error',function(error){
-		console.log('bridge client error: '+error)
+		log('bridge client error: '+error)
 	}).on('close',function(code, message){
-		console.log('bridge client  close: '+code+' '+message);
+		log('bridge client  close: '+code+' '+message);
 		client=null;
 		if(server){
 			me.emit('unpair', server, client);
@@ -183,14 +185,14 @@ if(process.argv){
 	if(!process.argc){
 		process.argc=process.argv.length;
 	}
-	console.log(process.argv);
+	log(process.argv);
 
 	var fs=require('fs');
 	fs.realpath(process.argv[1],function(err, p1){
 
 		fs.realpath(__filename,function(err, p2){
 
-			console.log(p1+' '+p2);
+			log(p1+' '+p2);
 
 			if(p1===p2){
 
