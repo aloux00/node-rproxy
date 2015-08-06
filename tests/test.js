@@ -9,7 +9,7 @@ var ws=require('ws');
 
 
 
-function EchoTest(BridgeProxy, AutoConnectProxy, ports){
+function EchoTest(BridgeProxy, AutoConnectProxy, ports, callback){
 	
 	
 	//a ws server that just echos back all messages...
@@ -43,8 +43,8 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports){
 
 	var clients=0;
 
-
-	for(var i=0;i< 50; i++){
+	var num=50
+	for(var i=0;i< num; i++){
 
 		clients++;
 		(function(i){
@@ -73,6 +73,11 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports){
 					console.log('test client #'+i+' sends: hello world');
 
 					client.send('hello world');
+					if(i==num-1){
+						if((typeof callback)=='function'){
+							callback();
+						}
+					}
 				}, i*100);
 
 			});
@@ -83,8 +88,11 @@ function EchoTest(BridgeProxy, AutoConnectProxy, ports){
 }
 
 //test direct load
-EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002});
+EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002}, function(){
+	
+	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004});
+	
+});
 
-//test index.js
-EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004});
+
 
