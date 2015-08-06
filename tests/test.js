@@ -130,7 +130,7 @@ var series=require("async").series(
         		sockets.echo.close(); //kill the 'application server' but keep the proxies
         		
         		
-        	}, after}, callback);
+        	}}, callback);
         	
         	
         	
