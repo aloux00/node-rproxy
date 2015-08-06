@@ -47,4 +47,5 @@ autoconnectproxy.js is run like this on the webapp private server:
  
 ```
 
+<img src="https://raw.github.com/nickolanack/node-rproxy/master/diagram.png" height="300px"/>
 
