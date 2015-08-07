@@ -115,8 +115,6 @@ WSAutoconnectProxy.prototype.close=function(){
 module.exports=WSAutoconnectProxy;
 
 if(process.argv){
-
-	log(process.argv);
 	if(!process.argc){
 		process.argc=process.argv.length;
 	}
@@ -124,11 +122,14 @@ if(process.argv){
 	fs.realpath(process.argv[1],function(err, p1){
 		fs.realpath(__filename,function(err, p2){
 
-			log(p1+' '+p2);
+			//console.log(p1+' '+p2);
 
 			if(p1===p2){
 
 
+				console.log(process.argv);
+				
+				
 				if(process.argc!=4){
 					throw new Error('Requires websocket source and destination address arguments: ie: www.host.com:port/path ('+process.argc+')');
 				}
