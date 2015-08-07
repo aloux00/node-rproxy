@@ -33,7 +33,7 @@ function WSBridgeProxy(config, callback){
 		port: port
 	},function(){
 
-		console.log('websocket listening on: '+port);
+		console.log('bridgeproxy websocket listening on: '+port);
 
 		if((typeof callback)=='function'){
 			callback();

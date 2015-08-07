@@ -26,17 +26,28 @@ function WSAutoconnectProxy(options){
 		config[key]=options[key];
 	});
 	
-	
-	for(var i=0;i<10;i++){
+	me._primeSourceConnection(config).on('open',function(){
+		console.log('autoconnectproxy listenting: '+me._pwd(config.source).' => '+me._pwd(config.dest));
+	});
+	for(var i=1;i<10;i++){
 		me._primeSourceConnection(config);
 	}
 
-	
-	
 
 };
 WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
-
+WSAutoconnectProxy.prototype._pwd=function(str){
+	
+	var at=str.indexOf('@');
+	var cln=str.lastIndexOf(':', at);
+	var substr=str.substring(cln, at);
+	var replace='';
+	for(var i=0;i<substr.length;i++){
+		replace+='*';
+	}
+	return str.substring(0,cln)+replace+str.substring(cln);
+	
+}
 WSAutoconnectProxy.prototype.connectionPool=function(){
 	var me=this;
 	return me._primedConnections.slice(0);
@@ -98,6 +109,8 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		}
 	}).on('error', cleanup);
 
+	
+	return source;
 }
 
 
