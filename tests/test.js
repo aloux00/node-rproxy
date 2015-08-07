@@ -18,7 +18,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 	var echo=(new ws.Server({
 		port: config.echo
 	},function(){
-		
+
 		var basicauth='';
 		basicauth='nickolanack:nick';
 
@@ -29,7 +29,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 			port:config.bridge,
 			basicauth:basicauth
 		}, function(){
-			
+
 			var WSAuto=require('../autoconnectproxy.js');
 
 			if(basicauth.length){
@@ -38,7 +38,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 			var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:'+config.bridge, destination:'ws://localhost:'+config.echo});
 
 			var clients=0;
-			
+
 			if(typeof(config.beforeTest)=='function'){
 				config.beforeTest({
 					echo:echo,
@@ -56,54 +56,53 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 					var client=(new ws('ws://localhost:'+config.bridge)).on('open', function(){
 						setTimeout(function(){
 							var tm=setTimeout(function(){
-								assert.fail('test '+test+' client#'+i+' expected response by now.');
-								callback(true, false);
+								callback(new Error('test '+test+' client#'+i+' expected response by now.');
 							}, 10000);
-							client.on('message',function(message){
+								client.on('message',function(message){
 
-								assert.equal(message, 'hello world', 'test '+test+' client#'+i+' echo failure, recieved: '+message);
-								console.log('test '+test+' client#'+i+' success');
-								success=true;
-								clearTimeout(tm);
-								this.close();
-								clients--;
-								if(clients==0){
+									callback(null, 'hello world', 'test '+test+' client#'+i+' recieved: '+message);
+									console.log('test '+test+' client#'+i+' success');
+									success=true;
+									clearTimeout(tm);
+									this.close();
+									clients--;
+									if(clients==0){
 
-									setTimeout(function(){
-										echo.close();
-										autoconnect.close();
-										bridge.close();
-										callback(null, true);
-									},100);
+										setTimeout(function(){
+											echo.close();
+											autoconnect.close();
+											bridge.close();
+											callback(null); //success
+										},100);
 
-								}
-							});
-							//console.log('test client #'+i+' sends: hello world');
+									}
+								});
+								//console.log('test client #'+i+' sends: hello world');
 
-							client.send('hello world');
-							
+								client.send('hello world');
+
 						}, i*100);
 
 					}).on('close', function(code, message){
-						
+
 						if(!success){
-							assert.fail('test '+test+' client#'+i+' closed before sending anything: '+code+' - '+message);
+							callback(new Error('test '+test+' client#'+i+' closed before sending anything: '+code+' - '+message));
 						}
-						
+
 					}).on('error',function(error){
-						
-						assert.fail('test '+test+' client#'+i+' error: '+error);
-						
+
+						callback(new Error('test '+test+' client#'+i+' error: '+error));
+
 					});
 				})(i);
 
 			}
-			
-			
+
+
 		});
-		
-		
-		
+
+
+
 	})).on('connection', function(wsclient){
 
 		wsclient.on('message',function(message){
@@ -119,38 +118,66 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 var series=require("async").series(
 		[
-        function(callback){
-        	//test direct load
-        	EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:50},callback);
-        },
-        function(callback){
-        	// test same ports - cleanup must complete
-        	EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:5},callback);
-        },
-        function(callback){
-        	//test using index, this should be the same as require('node-rproxy')
-        	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004, count:5}, callback);
-        },function(callback){
-        	
-        	
-       
-        	//trigger errors. application stops running
-        	EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:5, beforeTest:function(sockets){
-        		
-        		sockets.echo.close(); //kill the 'application server' but keep the proxies
-        		
-        		
-        	}}, callback);
-        	
-        	
-        	
-        }
-        ],
-        function(err, results) {
-		    if(err){
-		    	assert.fail('tests failed');
-		    }
-		    console.log(results);
+		 function(callback){
+			 //test direct load
+			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:50}, function(err, message){
+
+				 if(err){	
+					 assert.fail(err);
+				 }
+				 callback(null);
+				 
+			 });
+		 },
+		 function(callback){
+			 // test same ports - cleanup must complete
+			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:5}, function(err, message){
+
+				 if(err){	
+					 assert.fail(err);
+				 }
+				 callback(null);
+				 
+			 });
+		 },
+		 function(callback){
+			 //test using index, this should be the same as require('node-rproxy')
+			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004, count:5}, function(err, message){
+
+				 if(err){	
+					 assert.fail(err);
+				 }
+				 callback(null);
+				 
+			 });
+
+
+		 },function(callback){
+
+			 //trigger errors. application stops running
+			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:5, beforeTest:function(sockets){
+
+				 sockets.echo.close(); //kill the 'application server' but keep the proxies
+
+
+			 }}, function(err, message){
+
+				 if(!err){	
+					 assert.fail('Expected an error here');
+				 }
+				 callback(null);
+				 
+			 });
+
+
+
+		 }
+		 ],
+		 function(err, results) {
+			if(err){
+				assert.fail('tests failed');
+			}
+			console.log(results);
 		});
 
 
