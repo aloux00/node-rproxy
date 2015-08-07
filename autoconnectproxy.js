@@ -14,110 +14,103 @@ var log=function(message){
 		console.log(message);
 	}
 };
+
+
+var WSocket = require('ws');
+
 var events = require('events');
-function WSAutoconnectProxy(config){
+
+function WSAutoconnectProxy(options){
 
 	var me=this;
 	me._primedConnections=[];
 	me._isRunning=true;
+	
+	var config={
+			retry:0,
+			verbose:false
+	};
+	Object.keys(options).forEach(function (key) {
+		config[key]=options[key];
+	});
+	
+	
+	if(config.verbose){
+		me._verbose();
+	}
+	
+	
 	for(var i=0;i<10;i++){
 		me._primeSourceConnection(config);
 	}
 
+	
+	
 
 };
 WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
 
-WSAutoconnectProxy.prototype._primeSourceConnection=function(options){
+WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var me=this;
-	
-	var config={
-			retry:0
-			};
-	Object.keys(options).forEach(function (key) {
-        	config[key]=options[key];
-    });
-	
-	
-	if(!me._primedConnections){
-		me._primedConnections=[];
 
-	}
+	
 
-	var WSocket = require('ws');
+
+
+
 
 	/**
 	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
 	 */
 
-	var source=(new WSocket(config.source, function(){
+	var source=null;
+	var destination=null;
+	
+	var cleanup=function(){
+		if(source!=null){
+			source.close();
+		}
+		if(destination!=null){
+			destination.close();
+		}
+		
+		source=null;
+		destination=null;
+	}
+	
+	source=(new WSocket(config.source, function() {
 		me.emit('source.connect', destination);
 	})).on('open',function(){
-		//me._sourceConnections.push(source);
-		log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
 		me._primedConnections.push(source);
 	}).once('message', function message(data, flags) {
 
 		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
 
 
-		var destination=(new WSocket(config.destination,function(){
+		destination=(new WSocket(config.destination,function(){
 			me.emit('destination.connect', destination);
 		})).on('open', function() {
-			//me._destConnections.push(dest);
 
 			destination.send(data);
+			source.on('message', destination.send);
+			destination.on('message', source.send);
 
-
-
-			source.on('message', function message(data, flags) {
-				log('autoconnect proxy source sends: '+(typeof data));
-				destination.send(data);
-			}).on('close',function(code, message){
-
-				source=null;
-				if(destination){
-					destination.close();
-				}
-			});
-
-			destination.on('message', function message(data, flags) {
-				log('autoconnect proxy destination sends: '+(typeof data));
-				source.send(data);
-			}).on('close',function(code, message){
-				destination=null;
-				if(source){
-					source.close();
-				}
-
-			});
-
-		}).on('error',function(error){
-			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
-			//What to do here. it looks like the end point application is not running.
-			//throw new Error('Unable to connect to application on port: '+config.destination);
-			source.close();
-			me.emit('destination.error', error);
-			
-		}).on('close',function(code, message){
-			console.log('autoconnect proxy destination close: '+code+' '+message);
-			source.close();
-		});
+		}).on('error',cleanup).on('close', cleanup);
 
 
 		me._primeSourceConnection(config);
 
 	}).on('close',function(code, message){
-		console.log('autoconnect proxy source close: '+code+' '+message);
+		cleanup();
 		if(me._isRunning){
 			me._primeSourceConnection(config);
 		}
-	}).on('error',function(error){
-		console.log('autoconnect proxy source error: '+error)
-	});
+	}).on('error', cleanup);
 
 }
+
+
 WSAutoconnectProxy.prototype.close=function(){
 	var me=this;
 	me._isRunning=false;
@@ -125,6 +118,38 @@ WSAutoconnectProxy.prototype.close=function(){
 		con.close();
 	});
 
+
+};
+
+WSAutoconnectProxy.prototype._verbose=function(){
+	
+	me.on('source.connect',function(source){
+		
+		source.on('open',function(){
+			log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
+		}).on('message', function message(data, flags) {
+			log('autoconnect proxy source sends: '+(typeof data));
+		}).on('close',function(code, message){
+			console.log('autoconnect proxy source close: '+code+' '+message);
+		}).on('error',function(error){
+			console.log('autoconnect proxy source error: '+error);
+		});
+		
+		
+	});
+	
+	
+	me.on('destination.connect',function(destination){
+		
+		destination.on('message', function message(data, flags) {
+			log('autoconnect proxy destination sends: '+(typeof data));
+		}).on('error',function(error){
+			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
+		}).on('close',function(code, message){
+			console.log('autoconnect proxy destination close: '+code+' '+message);
+		});
+		
+	});
 
 }
 
