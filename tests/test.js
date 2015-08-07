@@ -150,6 +150,38 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 
 }
 
+//helper
+function logAutoconnectProxy(acp){
+	
+	acp.on('source.connect',function(source){
+		
+		source.on('open',function(){
+			log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
+		}).on('message', function message(data, flags) {
+			log('autoconnect proxy source sends: '+(typeof data));
+		}).on('close',function(code, message){
+			console.log('autoconnect proxy source close: '+code+' '+message);
+		}).on('error',function(error){
+			console.log('autoconnect proxy source error: '+error);
+		});
+		
+		
+	}).on('destination.connect',function(destination){
+		
+		destination.on('message', function message(data, flags) {
+			log('autoconnect proxy destination sends: '+(typeof data));
+		}).on('error',function(error){
+			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
+		}).on('close',function(code, message){
+			console.log('autoconnect proxy destination close: '+code+' '+message);
+		});
+		
+	});
+	
+}
+
+
+
 var series=require("async").series(
 		[
 		 function(callback){
@@ -205,7 +237,8 @@ var series=require("async").series(
 			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:1, beforeTest:function(sockets){
 
 				 sockets.echo.close(); //kill the 'application server' but keep the proxies
-
+				 logAutoconnectProxy(autoconnect);
+				 
 
 			 }}, function(err, message){
 

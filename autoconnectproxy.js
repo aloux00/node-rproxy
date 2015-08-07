@@ -7,14 +7,6 @@
  */
 
 
-var verbose=true;
-
-var log=function(message){
-	if(verbose){
-		console.log(message);
-	}
-};
-
 
 var WSocket = require('ws');
 
@@ -33,11 +25,6 @@ function WSAutoconnectProxy(options){
 	Object.keys(options).forEach(function (key) {
 		config[key]=options[key];
 	});
-	
-	
-	if(config.verbose){
-		me._verbose();
-	}
 	
 	
 	for(var i=0;i<10;i++){
@@ -121,37 +108,6 @@ WSAutoconnectProxy.prototype.close=function(){
 
 };
 
-WSAutoconnectProxy.prototype._verbose=function(){
-	
-	me.on('source.connect',function(source){
-		
-		source.on('open',function(){
-			log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
-		}).on('message', function message(data, flags) {
-			log('autoconnect proxy source sends: '+(typeof data));
-		}).on('close',function(code, message){
-			console.log('autoconnect proxy source close: '+code+' '+message);
-		}).on('error',function(error){
-			console.log('autoconnect proxy source error: '+error);
-		});
-		
-		
-	});
-	
-	
-	me.on('destination.connect',function(destination){
-		
-		destination.on('message', function message(data, flags) {
-			log('autoconnect proxy destination sends: '+(typeof data));
-		}).on('error',function(error){
-			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
-		}).on('close',function(code, message){
-			console.log('autoconnect proxy destination close: '+code+' '+message);
-		});
-		
-	});
-
-}
 
 module.exports=WSAutoconnectProxy;
 
