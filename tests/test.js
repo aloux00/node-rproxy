@@ -133,7 +133,11 @@ var series=require("async").series(
 		[
 		 function(callback){
 			 //test direct load
-			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:50}, function(err, message){
+			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:50, eachClient:function(client, i){
+				 client.on('message',function(m){
+					 console.log('test 0, client '+i+' success');
+				 });
+			 }}, function(err, message){
 
 				 if(err){	
 					 assert.fail(err);
@@ -145,7 +149,11 @@ var series=require("async").series(
 		 },
 		 function(callback){
 			 // test same ports - cleanup must complete
-			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:5}, function(err, message){
+			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:5, eachClient:function(client, i){
+				 client.on('message',function(m){
+					 console.log('test 0, client '+i+' success');
+				 });
+			 }}, function(err, message){
 
 				 if(err){	
 					 assert.fail(err);
@@ -156,7 +164,11 @@ var series=require("async").series(
 		 },
 		 function(callback){
 			 //test using index, this should be the same as require('node-rproxy')
-			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004, count:5}, function(err, message){
+			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9003, bridge:9004, count:5, eachClient:function(client, i){
+				 client.on('message',function(m){
+					 console.log('test 0, client '+i+' success');
+				 });
+			 }}, function(err, message){
 
 				 if(err){	
 					 assert.fail(err);
@@ -179,7 +191,7 @@ var series=require("async").series(
 				 if(!err){	
 					 assert.fail('Expected an error here');
 				 }
-				 callback(null);
+				 callback(err);
 				 
 			 });
 
