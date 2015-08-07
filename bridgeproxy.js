@@ -13,7 +13,13 @@ var log=function(message){
 };
 
 var events = require('events');
-function WSBridgeProxy(config){
+
+/**
+ * config options:{
+ * 		port:int //only processes with root permissions can listen on privileged ports, ie: sudo node bridgeproxy.js
+ * }
+ */
+function WSBridgeProxy(config, callback){
 	
 	// Simple websocket server
 	var me=this;
@@ -25,7 +31,7 @@ function WSBridgeProxy(config){
 	
 	me._server=(new (require('ws').Server)({
 		port: port
-	})).on('connection', function(wsclient){
+	}),callback).on('connection', function(wsclient){
 
 		if(me._isSocketAttemptingAuth(wsclient)){
 		
@@ -66,8 +72,8 @@ function WSBridgeProxy(config){
 	log('websocket listening on: '+port);
 
 };
-WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
+WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
 WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	var me=this;
@@ -177,9 +183,9 @@ WSBridgeProxy.prototype.close=function(){
 
 module.exports=WSBridgeProxy;
 
-
-
-
+/**
+ * can be run directly from the command line. ie: sudo node bridgeproxy.js port username:password
+ */
 
 if(process.argv){
 	if(!process.argc){
