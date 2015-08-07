@@ -45,7 +45,7 @@ WSAutoconnectProxy.prototype._pwd=function(str){
 	for(var i=0;i<substr.length;i++){
 		replace+='*';
 	}
-	return str.substring(0,cln)+replace+str.substring(cln);
+	return str.substring(0,cln)+replace+str.substring(at);
 	
 }
 WSAutoconnectProxy.prototype.connectionPool=function(){
