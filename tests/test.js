@@ -56,12 +56,17 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 					var client=(new ws('ws://localhost:'+config.bridge)).on('open', function(){
 						setTimeout(function(){
 							var tm=setTimeout(function(){
-								callback(new Error('test '+test+' client#'+i+' expected response by now.');
+								callback(new Error('test '+test+' client#'+i+' expected response by now.'));
 							}, 10000);
 								client.on('message',function(message){
 
-									callback(null, 'hello world', 'test '+test+' client#'+i+' recieved: '+message);
-									console.log('test '+test+' client#'+i+' success');
+									if(message!=='hello world'){
+										callback(new Error('test '+test+' client#'+i+' expected "hello world", recieved "'+message+'"');	
+									}else{
+										
+
+									}
+									
 									success=true;
 									clearTimeout(tm);
 									this.close();
@@ -125,6 +130,7 @@ var series=require("async").series(
 				 if(err){	
 					 assert.fail(err);
 				 }
+
 				 callback(null);
 				 
 			 });
