@@ -61,7 +61,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 								client.on('message',function(message){
 
 									if(message!=='hello world'){
-										callback(new Error('test '+test+' client#'+i+' expected "hello world", recieved "'+message+'"');	
+										callback(new Error('test '+test+' client#'+i+' expected "hello world", recieved "'+message+'"'));	
 									}else{
 										
 
