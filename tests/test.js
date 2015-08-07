@@ -59,7 +59,8 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 				clients++;
 				(function(i){
 					var success=false;
-					var client=(new ws('ws://localhost:'+config.bridge)).on('open', function(){
+					var client=new ws('ws://localhost:'+config.bridge);
+					client.on('open', function(){
 						setTimeout(function(){
 							var tm=setTimeout(function(){
 								callback(new Error('test '+test+' client#'+i+' expected response by now.'));
@@ -107,6 +108,11 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 						callback(new Error('test '+test+' client#'+i+' error: '+error));
 						
 					});
+					
+					if((typeof config.eachClient)=='function'){
+						config.eachClient(client);
+					}
+					
 				})(i);
 
 			}
