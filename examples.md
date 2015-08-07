@@ -6,7 +6,7 @@
 
 
 
-var autoconnect = new require('autoconnectproxy.js')();
+var autoconnect = new require('autoconnectproxy.js')({source:'ws://username:password@where.thepublicserveris.is:port, destination:'ws://where.theapplicationreallyis:port});
 
 autoconnect.on('source.connect',function(source){
 		
