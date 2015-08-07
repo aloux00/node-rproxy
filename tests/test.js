@@ -207,9 +207,9 @@ var series=require("async").series(
 		 ],
 		 function(err, results) {
 			if(err){
-				assert.fail('tests failed');
+				assert.fail(err);
 			}
-			console.log(results);
+			console.log('tests completed successfully');
 		});
 
 
