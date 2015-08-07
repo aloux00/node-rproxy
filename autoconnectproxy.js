@@ -7,7 +7,7 @@
  */
 
 
-var verbose=false
+var verbose=true;
 
 var log=function(message){
 	if(verbose){

@@ -114,7 +114,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 					}).on('close', function(code, message){
 
 						if(!success){
-							callback(new Error('test '+test+' client#'+i+' closed before sending anything: '+code+' - '+message));
+							callback(new Error('test '+test+' client#'+i+' closed before sending anything: '+code+(message?' - '+message:'')));
 							
 						}
 
