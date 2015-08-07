@@ -27,7 +27,7 @@ function WSAutoconnectProxy(options){
 	});
 	
 	me._primeSourceConnection(config).on('open',function(){
-		console.log('autoconnectproxy listenting: '+me._pwd(config.source).' => '+me._pwd(config.dest));
+		console.log('autoconnectproxy listenting: '+me._pwd(config.source)+' => '+me._pwd(config.dest));
 	});
 	for(var i=1;i<10;i++){
 		me._primeSourceConnection(config);
