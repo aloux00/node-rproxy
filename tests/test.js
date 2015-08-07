@@ -210,7 +210,7 @@ var series=require("async").series(
 			 }}, function(err, message){
 
 				 if(!err){	
-					 assert.fail('Expected an error here');
+					 assert.fail(err.message);
 				 }
 				 callback(err);
 				 
