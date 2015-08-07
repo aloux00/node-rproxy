@@ -51,9 +51,9 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(options){
 	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
 	 */
 
-	var source=(new WSocket(config.source), function(){
+	var source=(new WSocket(config.source, function(){
 		me.emit('source.connect', destination);
-	}).on('open',function(){
+	})).on('open',function(){
 		//me._sourceConnections.push(source);
 		log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
 		me._primedConnections.push(source);
@@ -62,9 +62,9 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(options){
 		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
 
 
-		var destination=(new WSocket(config.destination),function(){
+		var destination=(new WSocket(config.destination,function(){
 			me.emit('destination.connect', destination);
-		}).on('open', function() {
+		})).on('open', function() {
 			//me._destConnections.push(dest);
 
 			destination.send(data);
