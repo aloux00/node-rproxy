@@ -11,8 +11,11 @@ var testNumber=0;
 
 function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 
+	var cleanup=function(){}; //reassigned
+	
 	var callback=function(err, msg){
 		callbackFn(err, msg);
+		cleanup();
 		callback=function(){}; //avoid multiple executions, but don't worry about it below. 
 	}
 	
@@ -24,6 +27,11 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 	var echo=(new ws.Server({
 		port: config.echo
 	},function(){
+		
+		cleanup=function(){
+			echo.close();
+		}
+		
 
 		var basicauth='';
 		basicauth='nickolanack:nick';
@@ -50,7 +58,13 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 					echo:echo,
 					bridge:bridge,
 					autoconnect:autoconnect
-				})
+				});
+			}
+			
+			cleanup=function(){
+				echo.close();
+				bridge.close();
+				autoconnect.close();
 			}
 
 			var num=config.count;
@@ -60,6 +74,9 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 				(function(i){
 					var success=false;
 					var client=new ws('ws://localhost:'+config.bridge);
+					
+					
+					
 					client.on('open', function(){
 						setTimeout(function(){
 							var tm=setTimeout(function(){
@@ -82,10 +99,8 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 									if(clients==0){
 
 										setTimeout(function(){
-											echo.close();
-											autoconnect.close();
-											bridge.close();
 											callback(null); //success
+											cleanup();
 										},100);
 
 									}
