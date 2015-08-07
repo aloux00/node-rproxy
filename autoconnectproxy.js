@@ -93,8 +93,8 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		})).on('open', function() {
 
 			destination.send(data);
-			source.on('message', destination.send);
-			destination.on('message', source.send);
+			source.on('message', destination.send.bind(destination));
+			destination.on('message', source.send.bind(source));
 
 		}).on('error',cleanup).on('close', cleanup);
 
