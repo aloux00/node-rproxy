@@ -237,7 +237,7 @@ var series=require("async").series(
 			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:1, beforeTest:function(sockets){
 
 				 sockets.echo.close(); //kill the 'application server' but keep the proxies
-				 logAutoconnectProxy(autoconnect);
+				 logAutoconnectProxy(sockets.autoconnect);
 				 
 
 			 }}, function(err, message){
