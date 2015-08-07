@@ -93,6 +93,7 @@ WSBridgeProxy.prototype._verbose=function(){
 
 
 	bridge.on('server.connect',function(server){
+		
 		console.log('bridge recieved server socket');
 		
 		server.on('message', function message(data, flags) {
@@ -102,12 +103,10 @@ WSBridgeProxy.prototype._verbose=function(){
 		}).on('error',function(error){
 			console.log('bridge server error: '+error)
 		})
-		
-		
+
 	}).on('client.connect',function(client){
 		console.log('bridge recieved client socket');
 
-		
 		client.on('message', function message(data, flags) {
 			log('bridge client sends: '+(typeof data));
 		}).on('close',function(code, message){
@@ -115,7 +114,11 @@ WSBridgeProxy.prototype._verbose=function(){
 		}).on('error',function(error){
 			console.log('bridge client error: '+error)
 		});
-	});
+		
+	}).on('pair',function(server, client){
+		
+		console.log('bridge paired server client sockets');
+	})
 
 
 }
@@ -135,10 +138,16 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 
 		me._flushBuffers=function(server, client){
 			var i=me._bufferedClients.indexOf(client);
-			console.log('flushing buffer '+i+': '+(typeof me._buffers[i])+' server:'+server+' client:'+client);
-			me._buffers[i].forEach(function(message){
-				server.send(message);
-			});
+			if(me._buffers[i].length){
+				
+				me.emit('buffer.flush', wsclient, buffer);
+			
+				me._buffers[i].forEach(function(message){
+					server.send(message);
+				});
+				
+				me.emit('buffer.close', wsclient);
+			}
 
 			me._bufferedClients.splice(i,1);
 			me._buffers.splice(i,1);
@@ -154,11 +163,17 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	var buffer=[];
 	me._buffers.push(buffer);
 	var handler=function message(data, flags) {
+		
+		if(buffer.length==0){
+			me.emit('buffer.create', wsclient);
+		}
+		
 		buffer.push(data);
+		me.emit('buffer', wsclient, data);
 	}
 	me._handlers.push(handler);
 	wsclient.on('message', handler);
-	console.log('buffering client: @['+me._bufferedClients.indexOf(wsclient)+']');
+	
 };
 
 WSBridgeProxy.prototype._isSocketAttemptingAuth=function(wsclient){
@@ -178,7 +193,6 @@ WSBridgeProxy.prototype._authorizeSocketAsServerConnection=function(wsclient, ba
 };
 
 WSBridgeProxy.prototype._connectSockets=function(wsserver, wsclient){
-	console.log('bridge paired sockets: server::client');
 
 	var me=this;
 	var server=wsserver;
