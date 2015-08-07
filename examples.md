@@ -14,7 +14,7 @@ var autoconnect = new require('autoconnectproxy.js')({
 autoconnect.on('source.connect',function(source){
 		
 		source.on('open',function(){
-			log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
+			log('autoconnect created proxy: there are '+source.connectionPool().length+' ready sockets');
 		}).on('message', function message(data, flags) {
 			log('autoconnect proxy source sends: '+(typeof data));
 		}).on('close',function(code, message){

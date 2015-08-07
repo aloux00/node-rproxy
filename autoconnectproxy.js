@@ -37,7 +37,10 @@ function WSAutoconnectProxy(options){
 };
 WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
-
+WSAutoconnectProxy.prototype.connectionPool=function(){
+	var me=this;
+	return me._primedConnections.slice(0);
+}
 WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var me=this;
 
