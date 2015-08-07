@@ -31,7 +31,7 @@ function WSBridgeProxy(config, callback){
 	
 	me._server=(new (require('ws').Server)({
 		port: port
-	}),callback).on('connection', function(wsclient){
+	},callback)).on('connection', function(wsclient){
 
 		if(me._isSocketAttemptingAuth(wsclient)){
 		
