@@ -39,7 +39,7 @@ WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
 WSAutoconnectProxy.prototype._pwd=function(str){
 	
 	var at=str.indexOf('@');
-	var cln=str.lastIndexOf(':', at);
+	var cln=str.lastIndexOf(':', at)+1;
 	var substr=str.substring(cln, at);
 	var replace='';
 	for(var i=0;i<substr.length;i++){
