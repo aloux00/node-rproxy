@@ -4,13 +4,9 @@
  */
 
 
-var debug=false
+//deprecated
+var verbose=false
 
-var log=function(message){
-	if(debug){
-		console.log(message);
-	}
-};
 
 var events = require('events');
 
@@ -20,7 +16,7 @@ var events = require('events');
  * }
  */
 function WSBridgeProxy(config, callback){
-	
+
 	// Simple websocket server
 	var me=this;
 	events.EventEmitter.call(me);
@@ -28,30 +24,42 @@ function WSBridgeProxy(config, callback){
 	var freeServerConnections=[];
 	var freeClientConnections=[];
 
-	
-	me._server=(new (require('ws').Server)({
+	if(verbose){
+		me._verbose(); //deprecated
+	}
+
+
+	me.server=(new (require('ws').Server)({
 		port: port
-	},callback)).on('connection', function(wsclient){
+	},function(){
+
+		console.log('websocket listening on: '+port);
+
+		if((typeof callback)=='function'){
+			callback();
+		}
+	})).on('connection', function(wsclient){
+
 
 		if(me._isSocketAttemptingAuth(wsclient)){
-		
+
 			if(me._authorizeSocketAsServerConnection(wsclient, config.basicauth)){
 				freeServerConnections.push(wsclient)
-				log('bridge recieved server socket');
+				me.emit('server.connect', wsclient);
+
 			}else{
-				wsclient.close(3000,'bridge basic auth attempt invalid');
+				wsclient.close(3000, 'bridge basic auth attempt invalid');
 				return;
 			}
 		}else{
+
 			freeClientConnections.push(wsclient);
-			log('bridge recieved client socket');
+			me.emit('client.connect', wsclient);
 			me._bufferSocket(wsclient);
-		
+
 		}
 
-		
-		
-		
+
 
 		while(freeServerConnections.length&&freeClientConnections.length){
 
@@ -65,44 +73,83 @@ function WSBridgeProxy(config, callback){
 
 
 
-	}).on('error', function(error){
-		log('error: '+error);
+	}).on('error',function(err){
+		throw err;
 	});
-
-	log('websocket listening on: '+port);
 
 };
 
 WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
+
+WSBridgeProxy.prototype._verbose=function(){
+
+
+	var bridge=this;
+
+	bridge.server.on('close',function(code, mesage){
+		console.log('bridge closed: '+code+' - '+message);
+	});
+
+
+	bridge.on('server.connect',function(server){
+		console.log('bridge recieved server socket');
+		
+		server.on('message', function message(data, flags) {
+			console.log('bridge server sends: '+(typeof data));
+		}).on('close',function(code, message){
+			console.log('bridge server close: '+code+' '+message);
+		}).on('error',function(error){
+			console.log('bridge server error: '+error)
+		})
+		
+		
+	}).on('client.connect',function(client){
+		console.log('bridge recieved client socket');
+
+		
+		client.on('message', function message(data, flags) {
+			log('bridge client sends: '+(typeof data));
+		}).on('close',function(code, message){
+			console.log('bridge client  close: '+code+' '+message);
+		}).on('error',function(error){
+			console.log('bridge client error: '+error)
+		});
+	});
+
+
+}
+
+
 WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	var me=this;
 	if(!me._flushBuffers){
-		
-		log('init buffer handler');
-	
-		
+
+		console.log('init buffer handler');
+
+
 		me._bufferedClients=[];
 		me._buffers=[];
 		me._handlers=[];
-		
+
+
 		me._flushBuffers=function(server, client){
 			var i=me._bufferedClients.indexOf(client);
-			log('flushing buffer '+i+': '+(typeof me._buffers[i])+' server:'+server+' client:'+client);
+			console.log('flushing buffer '+i+': '+(typeof me._buffers[i])+' server:'+server+' client:'+client);
 			me._buffers[i].forEach(function(message){
 				server.send(message);
 			});
-			
+
 			me._bufferedClients.splice(i,1);
 			me._buffers.splice(i,1);
 			client.removeListener('message', me._handlers[i]);
 			me._handlers.splice(i,1);
 		}
-		
+
 		me.on('pair', me._flushBuffers);
 	}
-	
-	
+
+
 	me._bufferedClients.push(wsclient);
 	var buffer=[];
 	me._buffers.push(buffer);
@@ -111,7 +158,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	}
 	me._handlers.push(handler);
 	wsclient.on('message', handler);
-	log('buffering client: @['+me._bufferedClients.indexOf(wsclient)+']');
+	console.log('buffering client: @['+me._bufferedClients.indexOf(wsclient)+']');
 };
 
 WSBridgeProxy.prototype._isSocketAttemptingAuth=function(wsclient){
@@ -125,58 +172,48 @@ WSBridgeProxy.prototype._authorizeSocketAsServerConnection=function(wsclient, ba
 	if(auth===basicauth){
 		return true;
 	}else{
-		log('bridge basic auth attempt invalid: '+b64auth+' = ' +auth+' | '+basicauth)
+		console.log('bridge basic auth attempt invalid: '+b64auth+' = ' +auth+' | '+basicauth)
 		return false;
 	}
 };
 
-WSBridgeProxy.prototype._connectSockets=function(server, client){
-	log('bridge paired sockets: server::client');
+WSBridgeProxy.prototype._connectSockets=function(wsserver, wsclient){
+	console.log('bridge paired sockets: server::client');
 
 	var me=this;
-
-	server.on('message', function message(data, flags) {
-		log('bridge server sends: '+(typeof data));
-		client.send(data);
-	}).on('error',function(error){
-		log('bridge server error: '+error)
-	}).on('close',function(code, message){
-		log('bridge server close: '+code+' '+message);
-		server=null;
+	var server=wsserver;
+	var client=wsclient;
+	
+	var cleanup=function(){
+		if(client&&server){
+			me.emit('unpair', server, client);
+		}
 		if(client){
-			me.emit('unpair', server, client);
-			client.close();
+			client=null;
+			wsclient.close();
+			
 		}
-	});
-
-	client.on('message', function message(data, flags) {
-		log('bridge client sends: '+(typeof data));
-		server.send(data);
-
-	}).on('error',function(error){
-		log('bridge client error: '+error)
-	}).on('close',function(code, message){
-		log('bridge client  close: '+code+' '+message);
-		client=null;
 		if(server){
-			me.emit('unpair', server, client);
-			server.close();
+			server=null;
+			wsserver.close();
 		}
 		
 		
+	}
 
-	});
-	
+	server.on('message', client.send.bind(client)).on('close', cleanup).on('error', cleanup);
+	client.on('message', server.send.bind(server)).on('close', cleanup).on('error', cleanup);
+
 	me.emit('pair', server, client);
-	
-	
-	
+
+
+
 }
 
 WSBridgeProxy.prototype.close=function(){
 
 	var me=this;
-	me._server.close();
+	me.server.close();
 
 
 }
@@ -191,17 +228,18 @@ if(process.argv){
 	if(!process.argc){
 		process.argc=process.argv.length;
 	}
-	log(process.argv);
+
 
 	var fs=require('fs');
 	fs.realpath(process.argv[1],function(err, p1){
 
 		fs.realpath(__filename,function(err, p2){
 
-			log(p1+' '+p2);
+			//console.log(p1+' '+p2);
 
 			if(p1===p2){
 
+				console.log(process.argv);
 
 				if(process.argc>=3){
 					var opt={port:parseInt(process.argv[2])};

@@ -114,6 +114,9 @@ WSAutoconnectProxy.prototype.close=function(){
 
 module.exports=WSAutoconnectProxy;
 
+
+//run from command line
+
 if(process.argv){
 	if(!process.argc){
 		process.argc=process.argv.length;
