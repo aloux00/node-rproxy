@@ -245,7 +245,7 @@ var series=require("async").series(
 				 if(!err){	
 					 assert.fail(err.message);
 				 }
-				 callback(err);
+				 callback(null);
 				 
 			 });
 

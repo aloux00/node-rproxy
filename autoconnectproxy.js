@@ -55,16 +55,6 @@ WSAutoconnectProxy.prototype.connectionPool=function(){
 WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	var me=this;
 
-	
-
-
-
-
-
-	/**
-	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
-	 */
-
 	var source=null;
 	var destination=null;
 	
@@ -80,39 +70,48 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		destination=null;
 	}
 	
-	source=(new WSocket(config.source, function() {
-		me.emit('source.connect', destination);
+	source=me._connectToSource(config, function(dest){
+		destination=dest.on('close', cleanup).on('error', cleanup);
+	})on('close',cleanup).on('error', cleanup);
+		
+	
+	return source;
+}
+WSAutoconnectProxy.prototype._connectToSource=function(config, callback){
+	var me=this;
+	var source=(new WSocket(config.source, function() {
+		me.emit('source.connect', source);
 	})).on('open',function(){
 		me._primedConnections.push(source);
 	}).once('message', function message(data, flags) {
 
 		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
-
-
-		destination=(new WSocket(config.destination,function(){
-			me.emit('destination.connect', destination);
-		})).on('open', function() {
-
-			destination.send(data);
-			source.on('message', destination.send.bind(destination));
-			destination.on('message', source.send.bind(source));
-
-		}).on('error',cleanup).on('close', cleanup);
-
-
+		var destination=me._connectSourceToDestination(source, config);
+		callback(destination);
 		me._primeSourceConnection(config);
 
 	}).on('close',function(code, message){
-		cleanup();
 		if(me._isRunning){
 			me._primeSourceConnection(config);
 		}
-	}).on('error', cleanup);
-
+	});
 	
 	return source;
-}
+	
+};
+WSAutoconnectProxy.prototype._connectSourceToDestination=function(source, config){
+	var me=this;
+	var destination=(new WSocket(config.destination,function(){
+		me.emit('destination.connect', destination);
+	})).on('open', function() {
 
+		destination.send(data);
+		source.on('message', destination.send.bind(destination));
+		destination.on('message', source.send.bind(source));
+
+	});
+	return destination;
+}
 
 WSAutoconnectProxy.prototype.close=function(){
 	var me=this;

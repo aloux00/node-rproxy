@@ -128,8 +128,6 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	var me=this;
 	if(!me._flushBuffers){
 
-		console.log('init buffer handler');
-
 
 		me._bufferedClients=[];
 		me._buffers=[];
