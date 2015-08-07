@@ -81,7 +81,10 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 			});
 
 		}).on('error',function(error){
-			console.log('autoconnect proxy destination error: '+error)
+			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
+			//What to do here. it looks like the end point application is not running.
+			throw new Error('Unable to connect to application on port: '+config.destination);
+			
 		}).on('close',function(code, message){
 			console.log('autoconnect proxy destination close: '+code+' '+message);
 		});
