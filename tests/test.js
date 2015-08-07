@@ -9,8 +9,14 @@ var ws=require('ws');
 
 var testNumber=0;
 
-function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
+function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 
+	var callback=function(err, msg){
+		callbackFn(err, msg);
+		callback=function(){}; //avoid multiple executions, but don't worry about it below. 
+	}
+	
+	
 	var test=testNumber;
 	testNumber++;
 	console.log('Running Test: '+test);
@@ -64,6 +70,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 										callback(new Error('test '+test+' client#'+i+' expected "hello world", recieved "'+message+'"'));	
 									}else{
 										
+										//was logging a success message here.
 
 									}
 									
@@ -92,12 +99,13 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 						if(!success){
 							callback(new Error('test '+test+' client#'+i+' closed before sending anything: '+code+' - '+message));
+							
 						}
 
 					}).on('error',function(error){
-
+						
 						callback(new Error('test '+test+' client#'+i+' error: '+error));
-
+						
 					});
 				})(i);
 
