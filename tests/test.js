@@ -13,7 +13,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callback){
 
 	var test=testNumber;
 	testNumber++;
-	
+	console.log('Running Test: '+test);
 	//a ws server that just echos back all messages...
 	var echo=(new ws.Server({
 		port: config.echo

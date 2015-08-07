@@ -29,8 +29,17 @@ function WSAutoconnectProxy(config){
 WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
 
-WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
+WSAutoconnectProxy.prototype._primeSourceConnection=function(options){
 	var me=this;
+	
+	var config={
+			retry:0
+			};
+	Object.keys(options).forEach(function (key) {
+        	config[key]=options[key];
+    });
+	
+	
 	if(!me._primedConnections){
 		me._primedConnections=[];
 
@@ -42,7 +51,9 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 	 * creates a half connected socket. that immediately connects to the source, and once data is recieved, connects to the destination.
 	 */
 
-	var source=(new WSocket(config.source)).on('open',function(){
+	var source=(new WSocket(config.source), function(){
+		me.emit('source.connect', destination);
+	}).on('open',function(){
 		//me._sourceConnections.push(source);
 		log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
 		me._primedConnections.push(source);
@@ -51,7 +62,9 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
 
 
-		var destination=(new WSocket(config.destination)).on('open', function() {
+		var destination=(new WSocket(config.destination),function(){
+			me.emit('destination.connect', destination);
+		}).on('open', function() {
 			//me._destConnections.push(dest);
 
 			destination.send(data);
@@ -83,10 +96,13 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		}).on('error',function(error){
 			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
 			//What to do here. it looks like the end point application is not running.
-			throw new Error('Unable to connect to application on port: '+config.destination);
+			//throw new Error('Unable to connect to application on port: '+config.destination);
+			source.close();
+			me.emit('destination.error', error);
 			
 		}).on('close',function(code, message){
 			console.log('autoconnect proxy destination close: '+code+' '+message);
+			source.close();
 		});
 
 
