@@ -70,14 +70,16 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		destination=null;
 	}
 	
-	source=me._connectToSource(config, function(dest){
+	source=me._connectToSource(config, function(src){
+		source=src.on('close',cleanup).on('error', cleanup);
+	}, function(dest){
 		destination=dest.on('close', cleanup).on('error', cleanup);
-	})on('close',cleanup).on('error', cleanup);
+	});
 		
 	
 	return source;
 }
-WSAutoconnectProxy.prototype._connectToSource=function(config, callback){
+WSAutoconnectProxy.prototype._connectToSource=function(config, callbackSource, callbackDest){
 	var me=this;
 	var source=(new WSocket(config.source, function() {
 		me.emit('source.connect', source);
@@ -87,7 +89,7 @@ WSAutoconnectProxy.prototype._connectToSource=function(config, callback){
 
 		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
 		var destination=me._connectSourceToDestination(source, config);
-		callback(destination);
+		callbackDest(destination);
 		me._primeSourceConnection(config);
 
 	}).on('close',function(code, message){
@@ -95,8 +97,8 @@ WSAutoconnectProxy.prototype._connectToSource=function(config, callback){
 			me._primeSourceConnection(config);
 		}
 	});
-	
-	return source;
+	callbackSource(source);
+
 	
 };
 WSAutoconnectProxy.prototype._connectSourceToDestination=function(source, config){
