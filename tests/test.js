@@ -125,7 +125,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 					});
 					
 					if((typeof config.eachClient)=='function'){
-						config.eachClient(client);
+						config.eachClient(client, i);
 					}
 					
 				})(i);
@@ -222,7 +222,7 @@ var series=require("async").series(
 		 ],
 		 function(err, results) {
 			if(err){
-				assert.fail(err);
+				assert.fail(err.message||err);
 			}
 			console.log('tests completed successfully');
 		});
