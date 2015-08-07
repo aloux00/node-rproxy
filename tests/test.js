@@ -139,7 +139,7 @@ var series=require("async").series(
 		[
 		 function(callback){
 			 //test direct load
-			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:50, eachClient:function(client, i){
+			 EchoTest(require('../bridgeproxy.js'), require('../autoconnectproxy.js'), {echo:9001, bridge:9002, count:20, eachClient:function(client, i){
 				 client.on('message',function(m){
 					 console.log('test 0, client '+i+' success');
 				 });
@@ -187,7 +187,7 @@ var series=require("async").series(
 		 },function(callback){
 
 			 //trigger errors. application stops running
-			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:5, beforeTest:function(sockets){
+			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:1, beforeTest:function(sockets){
 
 				 sockets.echo.close(); //kill the 'application server' but keep the proxies
 
