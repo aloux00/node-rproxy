@@ -22,20 +22,41 @@ function WSAutoconnectProxy(options){
 			retry:0,
 			verbose:false
 	};
+	
 	Object.keys(options).forEach(function (key) {
 		config[key]=options[key];
 	});
 	
-	me._primeSourceConnection(config).on('open',function(){
-		console.log('autoconnectproxy listenting: '+me._pwd(config.source)+' => '+me._pwd(config.destination));
+	me.config=config;
+	
+	me.once('source.connect',function(source){
+		console.log('autoconnectproxy listenting: '+me._pwd(me.config.source)+' => '+me._pwd(me.config.destination));
+		source.on('error',function(err){
+			console.log('first connection to source error');
+			console.log(err);
+		});
 	});
-	for(var i=1;i<10;i++){
-		me._primeSourceConnection(config);
+	
+	me.once('destination.connect',function(destination){
+		
+		destination.on('error',function(err){
+			console.log('first connection to destination error');
+			console.log(err);
+		});
+	});
+	
+	for(var i=0;i<10;i++){
+		me._primeSourceConnection();
 	}
 
 
 };
 WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
+
+WSAutoconnectProxy.prototype._configure=function(options, ){
+	
+	
+}
 WSAutoconnectProxy.prototype._pwd=function(str){
 	
 	var at=str.indexOf('@');
@@ -52,7 +73,7 @@ WSAutoconnectProxy.prototype.connectionPool=function(){
 	var me=this;
 	return me._primedConnections.slice(0);
 }
-WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
+WSAutoconnectProxy.prototype._primeSourceConnection=function(){
 	var me=this;
 
 	var source=null;
@@ -70,40 +91,36 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(config){
 		destination=null;
 	}
 	
-	source=me._connectToSource(config, function(src){
+	me._connectToSource(function(src){
 		source=src.on('close',cleanup).on('error', cleanup);
 	}, function(dest){
 		destination=dest.on('close', cleanup).on('error', cleanup);
 	});
-		
-	
-	return source;
+
 }
-WSAutoconnectProxy.prototype._connectToSource=function(config, callbackSource, callbackDest){
+WSAutoconnectProxy.prototype._connectToSource=function(callbackSource, callbackDest){
 	var me=this;
-	var source=(new WSocket(config.source, function() {
+	var source=(new WSocket(me.config.source, function() {
 		me.emit('source.connect', source);
 	})).on('open',function(){
 		me._primedConnections.push(source);
 	}).once('message', function message(data, flags) {
 
 		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
-		var destination=me._connectSourceToDestination(source, config);
+		var destination=me._connectSourceToDestination(source);
 		callbackDest(destination);
-		me._primeSourceConnection(config);
+		me._primeSourceConnection();
 
 	}).on('close',function(code, message){
 		if(me._isRunning){
-			me._primeSourceConnection(config);
+			me._primeSourceConnection();
 		}
 	});
-	callbackSource(source);
-
-	
+	callbackSource(source);	
 };
-WSAutoconnectProxy.prototype._connectSourceToDestination=function(source, config){
+WSAutoconnectProxy.prototype._connectSourceToDestination=function(source){
 	var me=this;
-	var destination=(new WSocket(config.destination,function(){
+	var destination=(new WSocket(me.config.destination,function(){
 		me.emit('destination.connect', destination);
 	})).on('open', function() {
 

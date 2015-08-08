@@ -65,7 +65,7 @@ function WSBridgeProxy(config, callback){
 
 			var server=freeServerConnections.shift();
 			var client=freeClientConnections.shift();
-			me._connectSockets(server, client)
+			me._connectSockets(server, client);
 
 		}
 
