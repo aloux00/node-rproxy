@@ -53,7 +53,7 @@ function WSAutoconnectProxy(options){
 };
 WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
-WSAutoconnectProxy.prototype._configure=function(options, ){
+WSAutoconnectProxy.prototype._configure=function(a, b){
 	
 	
 }
