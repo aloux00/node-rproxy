@@ -108,7 +108,9 @@ WSAutoconnectProxy.prototype._connectToSource=function(callbackSource, callbackD
 
 		me._primedConnections.splice(me._primedConnections.indexOf(source),1);
 		var destination=me._connectSourceToDestination(source);
-		destination.send(data);
+		destination.on('open',function(){
+			destination.send(data);
+		});
 		callbackDest(destination);
 		me._primeSourceConnection();
 
@@ -125,7 +127,6 @@ WSAutoconnectProxy.prototype._connectSourceToDestination=function(source){
 		me.emit('destination.connect', destination);
 	})).on('open', function() {
 
-		
 		source.on('message', destination.send.bind(destination));
 		destination.on('message', source.send.bind(source));
 
