@@ -236,6 +236,7 @@ var series=require("async").series(
 			 //trigger errors. application stops running
 			 EchoTest(require('../index.js').AutoConnect, require('../index.js').Bridge, {echo:9001, bridge:9002, count:1, beforeTest:function(sockets){
 
+				 console.log('Closing echo server to trigger error')
 				 sockets.echo.close(); //kill the 'application server' but keep the proxies
 				 logAutoconnectProxy(sockets.autoconnect);
 				 
