@@ -34,6 +34,7 @@ function WSAutoconnectProxy(options){
 		source.on('error',function(err){
 			console.log('first connection to source error');
 			console.log(err);
+			throw err;
 		});
 	});
 	
@@ -42,6 +43,7 @@ function WSAutoconnectProxy(options){
 		destination.on('error',function(err){
 			console.log('first connection to destination error');
 			console.log(err);
+			throw err;
 		});
 	});
 	
