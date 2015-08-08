@@ -241,10 +241,11 @@ var series=require("async").series(
 				 
 
 			 }}, function(err, message){
-
+				 console.log('Error Test:');
 				 if(!err){	
-					 assert.fail(err.message);
+					 assert.fail('Expected connection error: No Destination Error);
 				 }
+				 console.log(err.message);
 				 callback(null);
 				 
 			 });
