@@ -49,7 +49,9 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 			if(basicauth.length){
 				basicauth=basicauth+'@';
 			}
-			var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:'+config.bridge, destination:'ws://localhost:'+config.echo});
+			var autoconnect=new WSAuto({source:'ws://'+basicauth+'localhost:'+config.bridge, destination:'ws://localhost:'+config.echo}).on('error',function(err){
+				callback(new Error('test '+test+' autoconnectproxy error'));
+			});
 
 			var clients=0;
 

@@ -34,7 +34,8 @@ function WSAutoconnectProxy(options){
 		source.on('error',function(err){
 			console.log('first connection to source error');
 			console.log(err);
-			throw new Error('Failed to connect to source (bridgeproxy?). Is it reachable, check ports and firewall config');
+			me.emit('error', new Error('Failed to connect to source (bridgeproxy?). Is it reachable, check ports and firewall config'));
+			me._stop();
 		});
 	});
 	
@@ -43,7 +44,8 @@ function WSAutoconnectProxy(options){
 		destination.on('error',function(err){
 			console.log('first connection to destination error');
 			console.log(err);
-			throw new Error('Failed to connect to destination (application?). Is it reachable, check ports and firewall config');
+			me.emit('error', new Error('Failed to connect to destination (application?). Is it reachable, check ports and firewall config');
+			me._stop();
 		});
 	});
 	
@@ -143,6 +145,13 @@ WSAutoconnectProxy.prototype._connectSourceToDestination=function(source){
 
 WSAutoconnectProxy.prototype.close=function(){
 	var me=this;
+	me._stop();
+	me.emit('close');
+
+
+};
+WSAutoconnectProxy.prototype._stop=function(){
+	var me=this;
 	me._isRunning=false;
 	me._primedConnections.forEach(function(con){
 		con.close();
@@ -150,7 +159,6 @@ WSAutoconnectProxy.prototype.close=function(){
 
 
 };
-
 
 module.exports=WSAutoconnectProxy;
 
