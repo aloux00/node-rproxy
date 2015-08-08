@@ -156,7 +156,7 @@ function logAutoconnectProxy(acp){
 	acp.on('source.connect',function(source){
 	
 		source.on('open',function(){
-			log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
+			log('autoconnect created proxy: there are '+acp.connectionPoolCount()+' ready sockets');
 		}).on('message', function message(data, flags) {
 			log('autoconnect proxy source sends: '+(typeof data));
 		}).on('close',function(code, message){

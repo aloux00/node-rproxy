@@ -51,7 +51,14 @@ function WSAutoconnectProxy(options){
 
 
 };
+
+
+
 WSAutoconnectProxy.prototype.__proto__ = events.EventEmitter.prototype;
+WSAutoconnectProxy.prototype.connectionPoolCount=function(){
+	var me=this;
+	return me._primedConnections.length;
+}
 
 WSAutoconnectProxy.prototype._configure=function(a, b){
 	
