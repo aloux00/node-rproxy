@@ -34,7 +34,7 @@ function WSAutoconnectProxy(options){
 		source.on('error',function(err){
 			console.log('first connection to source error');
 			console.log(err);
-			throw err;
+			throw new Error('Failed to connect to source (bridgeproxy?). Is it reachable, check ports and firewall config');
 		});
 	});
 	
@@ -43,7 +43,7 @@ function WSAutoconnectProxy(options){
 		destination.on('error',function(err){
 			console.log('first connection to destination error');
 			console.log(err);
-			throw err;
+			throw new Error('Failed to connect to destination (application?). Is it reachable, check ports and firewall config');
 		});
 	});
 	
