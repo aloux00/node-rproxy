@@ -44,7 +44,7 @@ function WSAutoconnectProxy(options){
 		destination.on('error',function(err){
 			console.log('first connection to destination error');
 			console.log(err);
-			me.emit('error', new Error('Failed to connect to destination (application?). Is it reachable, check ports and firewall config');
+			me.emit('error', new Error('Failed to connect to destination (application?). Is it reachable, check ports and firewall config'));
 			me._stop();
 		});
 	});
