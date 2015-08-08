@@ -154,7 +154,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 function logAutoconnectProxy(acp){
 	
 	acp.on('source.connect',function(source){
-		
+		throw new Error('acp source ?');
 		source.on('open',function(){
 			log('autoconnect created proxy: there are '+me._primedConnections.length+' ready sockets');
 		}).on('message', function message(data, flags) {
@@ -167,7 +167,7 @@ function logAutoconnectProxy(acp){
 		
 		
 	}).on('destination.connect',function(destination){
-		
+		throw new Error('acp destination ?');
 		destination.on('message', function message(data, flags) {
 			log('autoconnect proxy destination sends: '+(typeof data));
 		}).on('error',function(error){
