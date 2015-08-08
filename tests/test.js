@@ -45,6 +45,12 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 		}, function(){
 
 			var WSAuto=require('../autoconnectproxy.js');
+			
+			cleanup=function(){
+				echo.close();
+				bridge.close();
+				autoconnect.close();
+			}
 
 			if(basicauth.length){
 				basicauth=basicauth+'@';
@@ -63,11 +69,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 				});
 			}
 			
-			cleanup=function(){
-				echo.close();
-				bridge.close();
-				autoconnect.close();
-			}
+			
 
 			var num=config.count;
 			for(var i=0;i< num; i++){
