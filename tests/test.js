@@ -109,7 +109,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 
 								client.send('hello world');
 
-						}, i*100);
+						}, i*50);
 
 					}).on('close', function(code, message){
 
