@@ -152,7 +152,7 @@ function EchoTest(BridgeProxy, AutoConnectProxy, config, callbackFn){
 
 //helper
 function logAutoconnectProxy(acp){
-	
+	console.log('adding logger');
 	acp.on('source.connect',function(source){
 		throw new Error('acp source ?');
 		source.on('open',function(){
