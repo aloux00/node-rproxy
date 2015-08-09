@@ -15,6 +15,7 @@ var events = require('events');
 function WSAutoconnectProxy(options){
 
 	var me=this;
+	events.EventEmitter.call(me);
 	me._primedConnections=[];
 	me._isRunning=true;
 	
