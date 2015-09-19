@@ -2,13 +2,17 @@
  * 
  */
 
+var rproxy=require('./');
 
+var AutoConnectProxy=rproxy.AutoConnect;
+var BridgeProxy=rproxy.Bridge;
+var EchoServer=rproxy.EchoServer;
 
 var ws=require('ws');
 
 var testNumber=0;
 
-function EchoTest( AutoConnectProxy,BridgeProxy, config, callbackFn){
+function EchoTest(config, callbackFn){
 
 	var cleanup=function(){}; //reassigned
 	
@@ -23,7 +27,7 @@ function EchoTest( AutoConnectProxy,BridgeProxy, config, callbackFn){
 	testNumber++;
 	console.log('Running Test: '+test);
 	//a ws server that just echos back all messages...
-	var echo=(new ws.Server({
+	var echo=(new EchoServer({
 		port: config.echo
 	},function(){
 		
@@ -133,15 +137,6 @@ function EchoTest( AutoConnectProxy,BridgeProxy, config, callbackFn){
 
 
 		});
-
-
-
-	})).on('connection', function(wsclient){
-
-		wsclient.on('message',function(message){
-			wsclient.send(message);
-			//console.log('endpoint echos: '+message);
-		})
 
 	});
 
