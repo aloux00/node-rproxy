@@ -2,7 +2,7 @@
  * 
  */
 
-var rproxy=require('./');
+var rproxy=require('../');
 
 var AutoConnectProxy=rproxy.AutoConnect;
 var BridgeProxy=rproxy.Bridge;
