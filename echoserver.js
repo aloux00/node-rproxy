@@ -14,14 +14,14 @@ function EchoServer(config, callback){
 
 	me.echo=(new ws.Server({
 		port: config.port
-	},callback).on('connection', function(wsclient){
+	}, callback).on('connection', function(wsclient){
 
 		wsclient.on('message',function(message){
 			wsclient.send(message);
 			//console.log('endpoint echos: '+message);
 		});
 
-	});
+	}));
 
 }
 
