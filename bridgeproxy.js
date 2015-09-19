@@ -5,7 +5,6 @@
 
 
 //deprecated
-var verbose=false
 
 
 var events = require('events');
@@ -24,11 +23,7 @@ function WSBridgeProxy(config, callback){
 	var freeServerConnections=[];
 	var freeClientConnections=[];
 
-	if(verbose){
-		me._verbose(); //deprecated
-	}
 
-	
 	if(config.server){
 		
 		me.server=(new (require('ws').Server)({
@@ -117,41 +112,7 @@ WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
 WSBridgeProxy.prototype._verbose=function(){
 
 
-	var bridge=this;
-
-	bridge.server.on('close',function(code, mesage){
-		console.log('bridge closed: '+code+' - '+message);
-	});
-
-
-	bridge.on('server.connect',function(server){
-		
-		console.log('bridge recieved server socket');
-		
-		server.on('message', function message(data, flags) {
-			console.log('bridge server sends: '+(typeof data));
-		}).on('close',function(code, message){
-			console.log('bridge server close: '+code+' '+message);
-		}).on('error',function(error){
-			console.log('bridge server error: '+error)
-		})
-
-	}).on('client.connect',function(client){
-		console.log('bridge recieved client socket');
-
-		client.on('message', function message(data, flags) {
-			log('bridge client sends: '+(typeof data));
-		}).on('close',function(code, message){
-			console.log('bridge client  close: '+code+' '+message);
-		}).on('error',function(error){
-			console.log('bridge client error: '+error)
-		});
-		
-	}).on('pair',function(server, client){
-		
-		console.log('bridge paired server client sockets');
-	})
-
+	
 
 }
 
@@ -258,7 +219,6 @@ WSBridgeProxy.prototype.close=function(){
 
 	var me=this;
 	me.server.close();
-
 
 }
 

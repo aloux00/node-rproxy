@@ -139,40 +139,8 @@ function EchoTest(config, callbackFn){
 		});
 
 	}));
-
-
-
 }
 
-//helper
-function logAutoconnectProxy(acp){
-	console.log('adding logger');
-	acp.on('source.connect',function(source){
-	
-		source.on('open',function(){
-			console.log('autoconnect created proxy: there are '+acp.connectionPoolCount()+' ready sockets');
-		}).on('message', function message(data, flags) {
-			console.log('autoconnect proxy source sends: '+(typeof data));
-		}).on('close',function(code, message){
-			console.log('autoconnect proxy source close: '+code+' '+message);
-		}).on('error',function(error){
-			console.log('autoconnect proxy source error: '+error);
-		});
-		
-		
-	}).on('destination.connect',function(destination){
-		
-		destination.on('message', function message(data, flags) {
-			console.log('autoconnect proxy destination sends: '+(typeof data));
-		}).on('error',function(error){
-			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
-		}).on('close',function(code, message){
-			console.log('autoconnect proxy destination close: '+code+' '+message);
-		});
-		
-	});
-	
-}
 
 module.exports=EchoTest;
 
