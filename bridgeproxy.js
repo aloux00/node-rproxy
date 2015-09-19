@@ -20,7 +20,7 @@ function WSBridgeProxy(config, callback){
 	// Simple websocket server
 	var me=this;
 	events.EventEmitter.call(me);
-	var port = config.port;
+	
 	var freeServerConnections=[];
 	var freeClientConnections=[];
 
@@ -28,17 +28,49 @@ function WSBridgeProxy(config, callback){
 		me._verbose(); //deprecated
 	}
 
+	
+	if(config.server){
+		
+		me.server=(new (require('ws').Server)({
+			server: config.server
+		},function(){
 
-	me.server=(new (require('ws').Server)({
-		port: port
-	},function(){
+			console.log('bridgeproxy websocket listening on: '+config.port);
 
-		console.log('bridgeproxy websocket listening on: '+port);
-
-		if((typeof callback)=='function'){
-			callback();
+			if((typeof callback)=='function'){
+				callback();
+			}
+		}));
+		
+		if(config.server&&config.port){
+			config.server.listen(config.port, callback);
 		}
-	})).on('connection', function(wsclient){
+		
+	}else if(config.port){
+		
+		me.server=(new (require('ws').Server)({
+			port: config.port
+		},function(){
+
+			console.log('bridgeproxy websocket listening on: '+config.port);
+
+			if((typeof callback)=='function'){
+				callback();
+			}
+		}));
+		
+		
+	}else{
+		throw new Error('Expected server or port, in config');
+	}
+
+	
+	
+	
+	
+	
+	
+	me.server.on('connection', function(wsclient){
 
 
 		if(me._isSocketAttemptingAuth(wsclient)){
