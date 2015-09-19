@@ -138,7 +138,7 @@ function EchoTest(config, callbackFn){
 
 		});
 
-	});
+	}));
 
 
 
