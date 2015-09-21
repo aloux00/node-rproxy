@@ -56,7 +56,7 @@ function logBridgeProxy(brdg){
 		console.log('bridge recieved client socket');
 
 		client.on('message', function message(data, flags) {
-			log('bridge client sends: '+(typeof data));
+		console.log('bridge client sends: '+(typeof data));
 		}).on('close',function(code, message){
 			console.log('bridge client  close: '+code+' '+message);
 		}).on('error',function(error){
