@@ -21,10 +21,10 @@ function WSAutoconnectProxy(options){
 	
 	var config={
 			retry:0,
-			verbose:false
-			
+					
 			//source: 'ws://user:pass@url' this should point to an running instance of bridgeproxy.js,
-			//destination: // 'ws://localhost:port' this should be some app with a websocket interface
+			//destination: // 'ws://localhost:port' this should be some app with a websocket interface,
+			ping:15
 	};
 	
 	Object.keys(options).forEach(function (key) {
@@ -116,12 +116,19 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(){
 WSAutoconnectProxy.prototype._connectToSource=function(callbackSource, callbackDest){
 	var me=this;
 	
-	var pingInterval=15000;
+	var pingInterval=me.config.ping*1000;
 	var source=(new WSocket(me.config.source)).on('open',function(){
 		me._primedConnections.push(source);
 		
 		setInterval(function(){
+			try{
 			source.ping();
+			}catch(e){
+				
+				console.log('ping: not connected');
+				console.log(e);
+				
+			}
 		}, pingInterval);
 		
 	}).once('message', function message(data, flags) {
