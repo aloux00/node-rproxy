@@ -70,6 +70,16 @@ function logBridgeProxy(brdg){
 		console.log('bridge paired server client sockets');
 	}).on('unpair',function(server, client){
 		console.log('bridge destroyed pair server client sockets');
+	}).on('buffer.create',function(){
+		console.log('created client buffer');
+	}).on('buffer.close',function(){
+		console.log('closed client buffer');
+	}).on('server.close',function(){
+		console.log('server closed before being paired');		
+	}).on('client.close',function(){
+		console.log('client closed before being paired');		
+	}).on('buffer', function(wc, data){
+		console.log('buffered client message: '+data);		
 	});
 
 	

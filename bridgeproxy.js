@@ -4,8 +4,6 @@
  */
 
 
-//deprecated
-
 
 var events = require('events');
 
@@ -172,7 +170,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 					try{
 						server.send(message);
 					}catch(e){
-						console.log('client flush buffer: '+e.message);
+						console.log('client flush buffer error: '+e.message);
 					}
 				});
 
