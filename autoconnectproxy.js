@@ -35,7 +35,7 @@ function WSAutoconnectProxy(options, callback){
 	me.config=config;
 	
 	me.once('source.connect',function(source){
-		console.log('autoconnectproxy lisening: '+me._pwd(me.config.source)+' => '+me._pwd(me.config.destination));
+		console.log('autoconnectproxy listening: '+me._pwd(me.config.source)+' => '+me._pwd(me.config.destination));
 		source.on('error',function(err){
 			console.log('first connection to source error');
 			console.log(err);
