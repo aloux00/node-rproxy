@@ -247,7 +247,7 @@ WSBridgeProxy.prototype._connectSockets=function(wsserver, wsclient){
 
 	server.on('message', function(){
 		try{
-			client.send.call(client, arguments);
+			client.send.apply(client, arguments);
 		}catch(e){
 			console.log('send to client error: '+e.message);
 			//cleanup();
@@ -255,7 +255,7 @@ WSBridgeProxy.prototype._connectSockets=function(wsserver, wsclient){
 	}).on('close', cleanup).on('error', cleanup);
 	client.on('message', function(){
 		try{
-			server.send.call(server, arguments);
+			server.send.apply(server, arguments);
 		}catch(e){
 			console.log('send to server error: '+e.message);
 			//cleanup();
