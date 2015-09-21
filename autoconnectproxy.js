@@ -116,13 +116,13 @@ WSAutoconnectProxy.prototype._primeSourceConnection=function(){
 WSAutoconnectProxy.prototype._connectToSource=function(callbackSource, callbackDest){
 	var me=this;
 	
-	var pingInterval=15;
+	var pingInterval=15000;
 	var source=(new WSocket(me.config.source)).on('open',function(){
 		me._primedConnections.push(source);
 		
 		setInterval(function(){
 			source.ping();
-		}, pingInterval*1000);
+		}, pingInterval);
 		
 	}).once('message', function message(data, flags) {
 
@@ -139,6 +139,8 @@ WSAutoconnectProxy.prototype._connectToSource=function(callbackSource, callbackD
 			me._primeSourceConnection();
 		}
 		
+		clearInterval(pingInterval);
+	}).on('error', function(){
 		clearInterval(pingInterval);
 	});
 	me.emit('source.connect',source);
