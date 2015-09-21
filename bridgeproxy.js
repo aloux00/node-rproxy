@@ -169,6 +169,7 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 				me._buffers[i].forEach(function(message){
 					//client.emit('message', message);
 					try{
+						console.log('send to server buffered: '+message);
 						server.send(message);
 					}catch(e){
 						console.log('client flush buffer error: '+e.message);
@@ -249,7 +250,7 @@ WSBridgeProxy.prototype._connectSockets=function(wsserver, wsclient){
 			client.send.call(arguments);
 		}catch(e){
 			console.log('send to client error: '+e.message);
-			cleanup();
+			//cleanup();
 		}
 	}).on('close', cleanup).on('error', cleanup);
 	client.on('message', function(){
