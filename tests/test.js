@@ -84,6 +84,7 @@ var series=require("async").series(
 				assert.fail(err.message||err);
 			}
 			console.log('tests completed successfully');
+			process.exit(0);
 		});
 
 
