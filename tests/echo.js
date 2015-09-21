@@ -117,7 +117,7 @@ function EchoTest(config, callbackFn){
 									client.send('hello world');
 								},50+(i*25))
 
-						}, 300+(i*50));
+						}, (i*100));
 
 					}).on('close', function(code, message){
 
