@@ -100,9 +100,16 @@ function WSBridgeProxy(config, callback){
 
 
 
+	}).on('close',function(){
+		
+		console.log('bridge server closed');
+		
 	}).on('error',function(err){
 		throw err;
 	});
+	
+	
+	
 
 };
 
