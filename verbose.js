@@ -75,7 +75,7 @@ function logBridgeProxy(brdg){
 
 
 module.exports={
-		logAutoconnectProxy:logAutoconnectProxy
+		logAutoconnectProxy:logAutoconnectProxy,
 		logBridgeProxy:logBridgeProxy
 		
 }
