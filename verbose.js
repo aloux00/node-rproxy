@@ -37,6 +37,8 @@ function logBridgeProxy(brdg){
 
 	brdg.server.on('close',function(code, mesage){
 		console.log('bridge closed: '+code+' - '+message);
+	}).on('error',function(e){
+		console.log('bridge error: '+e.message);
 	});
 
 
@@ -66,6 +68,8 @@ function logBridgeProxy(brdg){
 	}).on('pair',function(server, client){
 		
 		console.log('bridge paired server client sockets');
+	}).on('unpair',function(server, client){
+		console.log('bridge destroyed pair server client sockets');
 	});
 
 	
