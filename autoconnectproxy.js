@@ -12,7 +12,7 @@ var WSocket = require('ws');
 
 var events = require('events');
 
-function WSAutoconnectProxy(options){
+function WSAutoconnectProxy(options, callback){
 
 	var me=this;
 	events.EventEmitter.call(me);
@@ -54,7 +54,9 @@ function WSAutoconnectProxy(options){
 	});
 	
 	for(var i=0;i<10;i++){
-		me._primeSourceConnection();
+		setTimeout(function(){
+			me._primeSourceConnection();
+		},100+(i*25));
 	}
 
 

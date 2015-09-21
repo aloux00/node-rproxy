@@ -86,6 +86,7 @@ function WSBridgeProxy(config, callback){
 				
 
 			}else{
+				console.log('drop server connection, failed basicauth');
 				wsclient.close(3000, 'bridge basic auth attempt invalid');
 				return;
 			}
