@@ -19,13 +19,13 @@ function WSBridgeProxy(config, callback){
 	// Simple websocket server
 	var me=this;
 	events.EventEmitter.call(me);
-	
+
 	var freeServerConnections=[];
 	var freeClientConnections=[];
 
 
 	if(config.server){
-		
+
 		me.server=(new (require('ws').Server)({
 			server: config.server
 		},function(){
@@ -36,13 +36,13 @@ function WSBridgeProxy(config, callback){
 				callback();
 			}
 		}));
-		
+
 		if(config.server&&config.port){
 			config.server.listen(config.port, callback);
 		}
-		
+
 	}else if(config.port){
-		
+
 		me.server=(new (require('ws').Server)({
 			port: config.port
 		},function(){
@@ -53,18 +53,12 @@ function WSBridgeProxy(config, callback){
 				callback();
 			}
 		}));
-		
-		
+
+
 	}else{
 		throw new Error('Expected server or port, in config');
 	}
 
-	
-	
-	
-	
-	
-	
 	me.server.on('connection', function(wsclient){
 
 
@@ -101,15 +95,15 @@ function WSBridgeProxy(config, callback){
 
 
 	}).on('close',function(){
-		
+
 		console.log('bridge server closed');
-		
+
 	}).on('error',function(err){
 		throw err;
 	});
-	
-	
-	
+
+
+
 
 };
 
@@ -119,7 +113,7 @@ WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
 WSBridgeProxy.prototype._verbose=function(){
 
 
-	
+
 
 }
 
@@ -137,13 +131,18 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 		me._flushBuffers=function(server, client){
 			var i=me._bufferedClients.indexOf(client);
 			if(me._buffers[i].length){
-				
+
 				me.emit('buffer.flush', wsclient, buffer);
-			
+
 				me._buffers[i].forEach(function(message){
-					server.send(message);
+					//client.emit('message', message);
+					try{
+						server.send(message);
+					}catch(e){
+						console.log('client flush buffer: '+e.message);
+					}
 				});
-				
+
 				me.emit('buffer.close', wsclient);
 			}
 
@@ -161,17 +160,17 @@ WSBridgeProxy.prototype._bufferSocket=function(wsclient){
 	var buffer=[];
 	me._buffers.push(buffer);
 	var handler=function message(data, flags) {
-		
+
 		if(buffer.length==0){
 			me.emit('buffer.create', wsclient);
 		}
-		
+
 		buffer.push(data);
 		me.emit('buffer', wsclient, data);
 	}
 	me._handlers.push(handler);
 	wsclient.on('message', handler);
-	
+
 };
 
 WSBridgeProxy.prototype._isSocketAttemptingAuth=function(wsclient){
@@ -195,7 +194,7 @@ WSBridgeProxy.prototype._connectSockets=function(wsserver, wsclient){
 	var me=this;
 	var server=wsserver;
 	var client=wsclient;
-	
+
 	var cleanup=function(){
 		if(client&&server){
 			me.emit('unpair', server, client);
@@ -203,18 +202,32 @@ WSBridgeProxy.prototype._connectSockets=function(wsserver, wsclient){
 		if(client){
 			client=null;
 			wsclient.close();
-			
+
 		}
 		if(server){
 			server=null;
 			wsserver.close();
 		}
-		
-		
+
+
 	}
 
-	server.on('message', client.send.bind(client)).on('close', cleanup).on('error', cleanup);
-	client.on('message', server.send.bind(server)).on('close', cleanup).on('error', cleanup);
+	server.on('message', function(){
+		try{
+			client.send.call(arguments);
+		}catch(e){
+			console.log('send to client error: '+e.message);
+			cleanup();
+		}
+	}).on('close', cleanup).on('error', cleanup);
+	client.on('message', function(){
+		try{
+			server.send.call(arguments);
+		}catch(e){
+			console.log('send to server error: '+e.message);
+			cleanup();
+		}
+	}).on('close', cleanup).on('error', cleanup);
 
 	me.emit('pair', server, client);
 
