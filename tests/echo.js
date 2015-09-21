@@ -57,6 +57,11 @@ function EchoTest(config, callbackFn){
 			var autoconnect=new AutoConnectProxy({source:'ws://'+basicauth+'localhost:'+config.bridge, destination:'ws://localhost:'+config.echo}).on('error',function(err){
 				callback(new Error('test '+test+' autoconnectproxy error'));
 			});
+			
+			if(config.verbose){
+				rproxy.util.logAutoconnectProxy(autoconnect);
+				rproxy.util.logBridgeProxy(bridge);
+			}
 
 			var clients=0;
 
@@ -77,8 +82,6 @@ function EchoTest(config, callbackFn){
 				(function(i){
 					var success=false;
 					var client=new ws('ws://localhost:'+config.bridge);
-					
-					
 					
 					client.on('open', function(){
 						setTimeout(function(){
@@ -110,9 +113,11 @@ function EchoTest(config, callbackFn){
 								});
 								//console.log('test client #'+i+' sends: hello world');
 
-								client.send('hello world');
+								setTimeout(function(){
+									client.send('hello world');
+								},50+(i*25))
 
-						}, i*50);
+						}, 300+(i*50));
 
 					}).on('close', function(code, message){
 

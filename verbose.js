@@ -4,7 +4,7 @@
 
 
 function logAutoconnectProxy(acp){
-	console.log('adding logger');
+	console.log('Logging Autoconnect');
 	acp.on('source.connect',function(source){
 	
 		source.on('open',function(){
@@ -34,6 +34,7 @@ function logAutoconnectProxy(acp){
 
 function logBridgeProxy(brdg){
 
+	console.log('Logging BridgeProxy');
 
 	brdg.server.on('close',function(code, mesage){
 		console.log('bridge closed: '+code+' - '+message);

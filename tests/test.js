@@ -9,14 +9,14 @@ var series=require("async").series(
 		[
 		 function(callback){
 			 //test direct load
-			 EchoTest({echo:9001, bridge:9002, count:20, eachClient:function(client, i){
+			 EchoTest({echo:9001, bridge:9002, count:20, verbose:true, eachClient:function(client, i){
 				 client.on('message',function(m){
 					 console.log('test 0, client '+i+' success');
 				 });
 			 }}, function(err, message){
 
 				 if(err){	
-					 assert.fail(err);
+					 assert.fail(err.message||err);
 				 }
 
 				 callback(null);
@@ -47,7 +47,7 @@ var series=require("async").series(
 			 }}, function(err, message){
 
 				 if(err){	
-					 assert.fail(err);
+					 assert.fail(err.message||err);
 				 }
 				 callback(null);
 				 
