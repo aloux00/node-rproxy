@@ -59,14 +59,32 @@ function WSBridgeProxy(config, callback){
 		throw new Error('Expected server or port, in config');
 	}
 
+	
+	
+	
+	
+	
 	me.server.on('connection', function(wsclient){
 
+		
+		
 
 		if(me._isSocketAttemptingAuth(wsclient)){
 
 			if(me._authorizeSocketAsServerConnection(wsclient, config.basicauth)){
 				freeServerConnections.push(wsclient)
 				me.emit('server.connect', wsclient);
+				
+				var handleServerEarlyDisconnect=function(){
+					var i=freeServerConnections.indexOf(wsclient)
+					if(i>=0){
+						freeServerConnections.splice(i,1);
+						console.log('server closed early');
+					}
+				};
+				
+				wsclient.on('close', handleServerEarlyDisconnect).on('error', handleServerEarlyDisconnect);
+				
 
 			}else{
 				wsclient.close(3000, 'bridge basic auth attempt invalid');
@@ -77,6 +95,19 @@ function WSBridgeProxy(config, callback){
 			freeClientConnections.push(wsclient);
 			me.emit('client.connect', wsclient);
 			me._bufferSocket(wsclient);
+			
+			
+			var handleClientEarlyDisconnect=function(){
+				var i=freeClientConnections.indexOf(wsclient)
+				if(i>=0){
+					freeClientConnections.splice(i,1);
+					console.log('client closed early');
+				}
+				
+			};
+			
+			wsclient.on('close', handleClientEarlyDisconnect).on('error', handleClientEarlyDisconnect);
+			
 
 		}
 
