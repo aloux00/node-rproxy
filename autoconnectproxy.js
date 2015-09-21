@@ -22,6 +22,9 @@ function WSAutoconnectProxy(options){
 	var config={
 			retry:0,
 			verbose:false
+			
+			//source: 'ws://user:pass@url' this should point to an running instance of bridgeproxy.js,
+			//destination: // 'ws://localhost:port' this should be some app with a websocket interface
 	};
 	
 	Object.keys(options).forEach(function (key) {
@@ -166,7 +169,7 @@ module.exports=WSAutoconnectProxy;
 
 //run from command line
 
-if(process.argv){
+if(process.argv&&process.argv.length>1){
 	if(!process.argc){
 		process.argc=process.argv.length;
 	}
