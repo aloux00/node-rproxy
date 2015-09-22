@@ -77,7 +77,7 @@ function WSBridgeProxy(config, callback){
 					var i=freeServerConnections.indexOf(wsclient)
 					if(i>=0){
 						freeServerConnections.splice(i,1);
-						console.log('server closed early');
+						console.log('server closed early: '+JSON.stringify(arguments));
 						me.emit('server.close');
 					}
 				};
@@ -141,13 +141,6 @@ function WSBridgeProxy(config, callback){
 
 WSBridgeProxy.prototype.__proto__ = events.EventEmitter.prototype;
 
-
-WSBridgeProxy.prototype._verbose=function(){
-
-
-
-
-}
 
 
 WSBridgeProxy.prototype._bufferSocket=function(wsclient){

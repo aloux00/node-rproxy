@@ -10,7 +10,7 @@ function logAutoconnectProxy(acp){
 		source.on('open',function(){
 			console.log('autoconnect created proxy: there are '+acp.connectionPoolCount()+' ready sockets');
 		}).on('message', function message(data, flags) {
-			console.log('autoconnect proxy source sends: '+(typeof data));
+			console.log('autoconnect proxy source sends: '+(typeof data)+' '+data);
 		}).on('close',function(code, message){
 			console.log('autoconnect proxy source close: '+code+' '+message);
 		}).on('error',function(error){
@@ -21,7 +21,7 @@ function logAutoconnectProxy(acp){
 	}).on('destination.connect',function(destination){
 		
 		destination.on('message', function message(data, flags) {
-			console.log('autoconnect proxy destination sends: '+(typeof data));
+			console.log('autoconnect proxy destination sends: '+(typeof data)+' '+data);
 		}).on('error',function(error){
 			console.error('autoconnect proxy destination error: '+error+' | '+(typeof error));
 		}).on('close',function(code, message){
@@ -48,7 +48,7 @@ function logBridgeProxy(brdg){
 		console.log('bridge recieved server socket');
 		
 		server.on('message', function message(data, flags) {
-			console.log('bridge server sends: '+(typeof data));
+			console.log('bridge server sends to client: '+(typeof data)+ ' '+data);
 		}).on('close',function(code, message){
 			console.log('bridge server close: '+code+' '+message);
 		}).on('error',function(error){
@@ -59,7 +59,7 @@ function logBridgeProxy(brdg){
 		console.log('bridge recieved client socket');
 
 		client.on('message', function message(data, flags) {
-		console.log('bridge client sends: '+(typeof data));
+		console.log('bridge client sends to server: '+(typeof data)+ ' '+data);
 		}).on('close',function(code, message){
 			console.log('bridge client  close: '+code+' '+message);
 		}).on('error',function(error){
