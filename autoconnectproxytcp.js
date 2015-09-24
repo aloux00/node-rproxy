@@ -104,7 +104,7 @@ TCPAutoconnectProxy.prototype._primeSourceConnection=function(){
 			source.close();
 		}
 		if(destination!=null){
-			destination.close();
+			destination.end();
 		}
 		
 		source=null;
@@ -201,9 +201,7 @@ TCPAutoconnectProxy.prototype._connectSourceToDestination=function(source){
 
 			source.on('message', function(data){ destination.write(data);});
 			destination.on('data', function(data){
-				console.log('dest: recieved data: '+data)
 				source.send(data);
-				
 			});
 			
 	});

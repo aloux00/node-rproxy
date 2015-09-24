@@ -10,6 +10,6 @@ module.exports={
 		
 		TCPAutoConnect:require('./autoconnectproxytcp.js'),
 		TCPEchoServer:require('./echoservertcp.js'),
-		
+		TCPWSProxy:require('./tcpwsproxy.js'),
 		util:require('./verbose.js'),
 }
