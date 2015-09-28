@@ -26,8 +26,6 @@ function TCPWSProxy(config, callback){
 			console.log('Established Websocket Connection: '+config.destination);
 			
 			socket.removeListener('data', bufferFn);
-
-			
 			socket.on('data',wsclient.send.bind(wsclient));
 			wsclient.on('message',socket.write.bind(socket));
 			
