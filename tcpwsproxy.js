@@ -40,7 +40,7 @@ function TCPWSProxy(config, callback) {
 
 
 			pingInterval = setInterval(function() {
-				wsclient.ping('hello world');
+				wsclient.ping();
 				//console.log('ping');
 			}, 10000);
 
