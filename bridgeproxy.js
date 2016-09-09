@@ -97,7 +97,7 @@ function WSBridgeProxy(config, callback) {
 					if (i >= 0) {
 						freeServerConnections[domain].splice(i, 1);
 						console.log('server closed early: ' + JSON.stringify(arguments));
-						me.emit('server.close');
+						me.emit('server.close', wsclient);
 					}
 				};
 
@@ -121,7 +121,7 @@ function WSBridgeProxy(config, callback) {
 				if (i >= 0) {
 					freeClientConnections[domain].splice(i, 1);
 					console.log('client closed early');
-					me.emit('client.close');
+					me.emit('client.close', wsclient);
 				}
 
 			};
