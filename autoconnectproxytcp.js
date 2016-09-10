@@ -21,57 +21,68 @@ var TCPAutoconnectProxy = function() {
 util.inherits(TCPAutoconnectProxy, WSAutoconnectProxy);
 
 TCPAutoconnectProxy.prototype.constructor = WSAutoconnectProxy;
-TCPAutoconnectProxy.prototype._connectSourceToDestination = function(source) {
-
-
-
+TCPAutoconnectProxy.prototype._connectToSource = function(callbackSource, callbackDest) {
 	var me = this;
-	//	var destination=(new WSocket(me.config.destination)).on('open', function() {
-	//
-	//		source.on('message', destination.send.bind(destination));
-	//		destination.on('message', source.send.bind(source));
-	//
-	//	});
-	//	me.emit('destination.connect', destination);
-	//	return destination;
+
+	var pingTimer = me.config.ping * 1000;
+	var pingInterval = null;
 
 
-	var port = me.config.destination;
-	var opts = {
-		port: port
-	};
-	if ((typeof port) == 'string') {
 
-		var i = port.indexOf(':');
-		if (i > 0) {
-			opts.host = port.substring(0, i);
-			opts.port = port.substring(i + 1);
-		}
-	}
+	var source = (new WSocket(me.config.source)).on('open', function() {
+		me._primedConnections.push(source);
 
-	var net = require('net');
-	console.log('connecting source to destination ' + JSON.stringify(opts));
-	var destination = net.connect(opts,
-		function() { //'connect' listener
+		pingInterval = setInterval(function() {
+			try {
+				source.ping();
+			} catch (e) {
 
-			console.log('connect');
+				console.log('ping: not connected');
+				console.log(e);
 
-			source.on('message', function(data) {
-				destination.write(data);
-			});
-			destination.on('data', function(data) {
-				source.send(data);
-			});
+			}
+		}, pingTimer);
 
+	}).once('message', function message(data, flags) {
+
+		me._removeSourceConnectionFromPool(source);
+		var destination = me._connectSourceToDestination(source);
+		destination.on('connect', function() {
+			console.log('connected');
+			console.log('write data from bridge');
+			destination.write(data);
 		});
+		callbackDest(destination);
+		me._primeSourceConnection();
 
+	}).on('close', function(code, message) {
+		if (me._isRunning) {
 
+			if (me.connectionPoolCount() < me.config.connections) {
+				me._primeSourceConnection();
+			}
 
-	me.emit('destination.connect', destination);
-	return destination;
+			me._removeSourceConnectionFromPool(source);
+		}
 
+		clearInterval(pingInterval);
+	}).on('error', function() {
+		if (me._isRunning) {
 
-}
+			if (me.connectionPoolCount() < me.config.connections) {
+				me._primeSourceConnection();
+			}
+
+			me._removeSourceConnectionFromPool(source);
+
+		}
+		clearInterval(pingInterval);
+	});
+	me.emit('source.connect', source);
+	callbackSource(source);
+
+	return source;
+};
 TCPAutoconnectProxy.prototype._primeSourceConnection = function() {
 	var me = this;
 
