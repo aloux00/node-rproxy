@@ -21,7 +21,82 @@ var TCPAutoconnectProxy = function() {
 util.inherits(TCPAutoconnectProxy, WSAutoconnectProxy);
 
 TCPAutoconnectProxy.prototype.constructor = WSAutoconnectProxy;
+TCPAutoconnectProxy.prototype._connectSourceToDestination = function(source) {
 
+
+
+	var me = this;
+	//	var destination=(new WSocket(me.config.destination)).on('open', function() {
+	//
+	//		source.on('message', destination.send.bind(destination));
+	//		destination.on('message', source.send.bind(source));
+	//
+	//	});
+	//	me.emit('destination.connect', destination);
+	//	return destination;
+
+
+	var port = me.config.destination;
+	var opts = {
+		port: port
+	};
+	if ((typeof port) == 'string') {
+
+		var i = port.indexOf(':');
+		if (i > 0) {
+			opts.host = port.substring(0, i);
+			opts.port = port.substring(i + 1);
+		}
+	}
+
+	var net = require('net');
+	console.log('connecting source to destination ' + JSON.stringify(opts));
+	var destination = net.connect(opts,
+		function() { //'connect' listener
+
+			console.log('connect');
+
+			source.on('message', function(data) {
+				destination.write(data);
+			});
+			destination.on('data', function(data) {
+				source.send(data);
+			});
+
+		});
+
+
+
+	me.emit('destination.connect', destination);
+	return destination;
+
+
+}
+TCPAutoconnectProxy.prototype._primeSourceConnection = function() {
+	var me = this;
+
+	var source = null;
+	var destination = null;
+
+	var cleanup = function() {
+		if (source != null) {
+			source.close();
+		}
+		if (destination != null) {
+			destination.end();
+		}
+
+		source = null;
+		destination = null;
+	}
+
+	return me._connectToSource(function(src) {
+		source = src.on('close', cleanup).on('error', cleanup);
+	}, function(dest) {
+		destination = dest.on('end', cleanup).on('close', cleanup).on('error', cleanup);
+	});
+
+}
 TCPAutoconnectProxy.prototype._connectSourceToDestination = function(source) {
 
 
@@ -63,6 +138,7 @@ TCPAutoconnectProxy.prototype._connectSourceToDestination = function(source) {
 			});
 
 		});
+	destination.close = destination.end;
 
 	me.emit('destination.connect', destination);
 	return destination;
