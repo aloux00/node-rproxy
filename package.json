@@ -1,6 +1,6 @@
 {
   "name": "node-rproxy",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "a kind of reverse proxy webserver",
   "main": "index.js",
   "scripts": {
@@ -20,9 +20,9 @@
   "bugs": {
     "url": "https://github.com/nickolanack/node-rproxy/issues"
   },
-  "dependencies":{
-    "ws":"latest",
-    "atob":"latest",
-    "async":"latest"
+  "dependencies": {
+    "ws": "latest",
+    "atob": "latest",
+    "async": "latest"
   }
 }
