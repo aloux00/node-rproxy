@@ -158,7 +158,7 @@ WSAutoconnectProxy.prototype._connectToSource = function(callbackSource, callbac
 
 	}).once('message', function message(data, flags) {
 
-		me._primedConnections.splice(me._primedConnections.indexOf(source), 1);
+		me._removeSourceConnectionFromPool(source);
 		var destination = me._connectSourceToDestination(source);
 		destination.on('open', function() {
 			destination.send(data);
@@ -173,13 +173,18 @@ WSAutoconnectProxy.prototype._connectToSource = function(callbackSource, callbac
 			}
 		}
 
+		me._removeSourceConnectionFromPool(source);
 		clearInterval(pingInterval);
 	}).on('error', function() {
 		if (me._isRunning) {
 			if (me.connectionPoolCount() < me.config.connections) {
 				me._primeSourceConnection();
 			}
+
+
 		}
+
+		me._removeSourceConnectionFromPool(source);
 		clearInterval(pingInterval);
 	});
 	me.emit('source.connect', source);

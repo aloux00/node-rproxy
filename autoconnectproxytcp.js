@@ -13,7 +13,14 @@ var WSocket = require('ws');
 
 var events = require('events');
 
-TCPAutoconnectProxy = Object.create(WSAutoconnectProxy);
+util = require('util');
+
+var TCPAutoconnectProxy = function() {
+	WSAutoconnectProxy.apply(this, arguments);
+}
+util.inherits(TCPAutoconnectProxy, WSAutoconnectProxy);
+
+TCPAutoconnectProxy.prototype.constructor = WSAutoconnectProxy;
 
 TCPAutoconnectProxy.prototype._connectSourceToDestination = function(source) {
 
