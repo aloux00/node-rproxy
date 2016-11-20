@@ -50,6 +50,23 @@ TCPAutoconnectProxy.prototype._connectToSource = function(callbackSource, callba
 		destination.on('connect', function() {
 			console.log('connected');
 			console.log('write data from bridge');
+
+			/**
+			 * Added support for bridge to notify destination that a cling has connected. 
+			 * the first message sent from the bridge is 'CLIENT CONNECT' this message should not 
+			 * be passed on to the destination port but trigger the connection.
+			 */
+
+			if(data==='CLIENT CONNECT'){
+
+				console.log('recieved client');
+
+			}else{
+				destination.write(data);
+			}
+
+
+
 			destination.write(data);
 		});
 		callbackDest(destination);
