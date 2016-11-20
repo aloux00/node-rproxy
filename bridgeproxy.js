@@ -271,6 +271,11 @@ WSBridgeProxy.prototype._connectSockets = function(wsserver, wsclient) {
 		}
 	}).on('close', cleanup).on('error', cleanup);
 
+
+
+	server.send('CLIENT CONNECT');
+
+	//will cause client buffered data to be sent.
 	me.emit('pair', server, client);
 
 
